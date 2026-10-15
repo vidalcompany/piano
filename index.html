@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Concert Grand Piano - True Sustain & Echo</title>
+  <title>Yamaha PSR-SX / Genos Arranger Workstation</title>
   <style>
     * {
       box-sizing: border-box;
@@ -17,96 +17,193 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 15%, #172033 0%, #07090e 82%);
+      background: radial-gradient(circle at 50% 25%, #161f33 0%, #07090f 85%);
       font-family: Tahoma, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: #f1f5f9;
     }
 
-    /* نوار کنترل بالا */
-    .hud {
+    /* پنل کنسول ارگ یاماها در بالای صفحه */
+    .yamaha-console {
       position: fixed;
-      top: 12px;
+      top: 8px;
       left: 50%;
       transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      background: rgba(15, 20, 32, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 999px;
+      width: 97vw;
+      max-width: 1220px;
+      background: linear-gradient(180deg, #1e2536 0%, #111622 100%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-bottom: 3px solid #f59e0b;
+      border-radius: 14px;
+      padding: 8px 12px;
       z-index: 100;
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75);
+      display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      width: max-content;
-      max-width: 96vw;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .select-piano {
-      background: rgba(245, 158, 11, 0.16);
-      color: #fde68a;
-      border: 1px solid rgba(245, 158, 11, 0.45);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      outline: none;
+    .brand-badge {
+      display: flex;
+      flex-direction: column;
+      padding-left: 8px;
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: #fbbf24;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 9px;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+    }
+
+    /* صفحه نمایشگر LCD وسط ارگ */
+    .lcd-screen {
+      background: linear-gradient(180deg, #061826 0%, #030d17 100%);
+      border: 1px solid #0284c7;
+      box-shadow: inset 0 0 18px rgba(14, 165, 233, 0.25);
+      border-radius: 8px;
+      padding: 5px 12px;
+      min-width: 230px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
       direction: ltr;
     }
 
-    .select-piano option {
-      background: #11151f;
-      color: #fff;
+    .lcd-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #38bdf8;
+      font-family: monospace;
     }
 
-    .btn {
+    .lcd-main {
+      font-size: 12px;
+      font-weight: bold;
+      color: #e0f2fe;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lcd-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #fbbf24;
+      font-family: monospace;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .group-label {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    select.y-select {
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select.y-select.gold {
+      border-color: rgba(245, 158, 11, 0.55);
+      color: #fde68a;
+    }
+
+    select.y-select.cyan {
+      border-color: rgba(56, 189, 248, 0.55);
+      color: #bae6fd;
+    }
+
+    .y-btn {
       background: rgba(255, 255, 255, 0.08);
       color: #f1f5f9;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.15s;
+      transition: 0.14s;
+      white-space: nowrap;
     }
 
-    .btn:hover {
+    .y-btn:hover {
       background: rgba(255, 255, 255, 0.18);
     }
 
-    .btn.active {
+    .y-btn.play-song {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: #10b981;
+      color: #6ee7b7;
+    }
+
+    .y-btn.play-song.playing {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+
+    .y-btn.rhythm-btn.active {
+      background: rgba(245, 158, 11, 0.28);
+      border-color: #f59e0b;
+      color: #fde68a;
+    }
+
+    .y-btn.fill-btn {
+      background: rgba(168, 85, 247, 0.22);
+      border-color: #a855f7;
+      color: #e9d5ff;
+    }
+
+    .y-btn.active-blue {
       background: rgba(56, 189, 248, 0.22);
       border-color: #38bdf8;
       color: #7dd3fc;
     }
 
-    .echo-control {
+    .slider-box {
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.28);
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       font-size: 11px;
       color: #cbd5e1;
     }
 
-    .echo-control input[type="range"] {
-      width: 75px;
+    .slider-box input[type="range"] {
+      width: 62px;
       accent-color: #f59e0b;
       cursor: pointer;
     }
 
-    .hint {
-      font-size: 11px;
-      color: #94a3b8;
-      padding: 0 4px;
-    }
-
-    /* بوم گرافیکی */
+    /* بوم گرافیکی سیم‌ها، درام، گوی‌های متحرک و دفتر نت */
     #stage {
       position: fixed;
       top: 0;
@@ -116,62 +213,68 @@
       z-index: 1;
     }
 
-    /* کیبورد فیزیکی پیانو */
+    /* کیبورد ۲۲ کلاویه‌ای ارگ یاماها */
     .piano-wrapper {
       position: fixed;
-      bottom: 162px;
+      bottom: 148px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 50;
       padding: 10px 14px 6px;
-      background: linear-gradient(180deg, #1e2430 0%, #0d1017 100%);
-      border-top: 4px solid #991b1b;
+      background: linear-gradient(180deg, #222938 0%, #0d1017 100%);
+      border-top: 4px solid #b91c1c;
       border-radius: 10px 10px 12px 12px;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.82), 0 0 0 1px rgba(255, 255, 255, 0.1);
       direction: ltr;
     }
 
     .piano-keys {
       position: relative;
       display: flex;
-      height: 168px;
+      height: 158px;
       user-select: none;
     }
 
     .key-white {
       position: relative;
-      width: 54px;
-      height: 168px;
-      margin: 0 1.5px;
+      width: 48px;
+      height: 158px;
+      margin: 0 1px;
       background: linear-gradient(180deg, #e2e8f0 0%, #ffffff 92%, #cbd5e1 100%);
       border: 1px solid #475569;
-      border-radius: 0 0 8px 8px;
+      border-radius: 0 0 7px 7px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       box-shadow: inset 0 -5px 0 rgba(15, 23, 42, 0.15), 0 4px 8px rgba(0, 0, 0, 0.4);
-      transition: transform 0.04s ease, background 0.06s ease, box-shadow 0.06s ease;
+      transition: transform 0.04s ease, background 0.05s ease;
     }
 
     .key-white.playing {
       transform: translateY(5px);
       background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
-      box-shadow: 0 0 25px rgba(245, 158, 11, 0.85);
+      box-shadow: 0 0 24px rgba(245, 158, 11, 0.9);
+    }
+
+    .key-white.auto-playing {
+      transform: translateY(5px);
+      background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%);
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.95);
     }
 
     .key-white .k-shortcut {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 800;
       color: #1e293b;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
       pointer-events: none;
     }
 
     .key-white .k-note {
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 600;
       color: #64748b;
       pointer-events: none;
@@ -180,80 +283,154 @@
     .key-black {
       position: absolute;
       top: 0;
-      width: 34px;
-      height: 106px;
+      width: 30px;
+      height: 98px;
       background: linear-gradient(180deg, #334155 0%, #0f172a 85%, #020617 100%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-top: none;
-      border-radius: 0 0 6px 6px;
+      border-radius: 0 0 5px 5px;
       z-index: 10;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      padding-bottom: 10px;
+      padding-bottom: 8px;
       box-shadow: inset 0 -4px 0 rgba(255, 255, 255, 0.08), 0 6px 12px rgba(0, 0, 0, 0.65);
-      transition: transform 0.04s ease, background 0.06s ease, box-shadow 0.06s ease;
+      transition: transform 0.04s ease, background 0.05s ease;
     }
 
     .key-black.playing {
       transform: translateY(4px);
       background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 100%);
-      box-shadow: 0 0 22px rgba(56, 189, 248, 0.9);
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.95);
+    }
+
+    .key-black.auto-playing {
+      transform: translateY(4px);
+      background: linear-gradient(180deg, #6ee7b7 0%, #059669 100%);
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.95);
     }
 
     .key-black .k-shortcut {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: #e2e8f0;
       pointer-events: none;
     }
 
     .key-black .k-note {
-      font-size: 9px;
+      font-size: 8.5px;
       color: #94a3b8;
       pointer-events: none;
     }
 
-    @media (max-width: 700px) {
-      .key-white { width: 34px; height: 135px; }
-      .key-black { width: 22px; height: 84px; }
+    @media (max-width: 780px) {
+      .key-white { width: 32px; height: 128px; }
+      .key-black { width: 20px; height: 78px; }
+      .lcd-screen { min-width: 175px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- نوار ابزار بالا -->
-  <div class="hud">
-    <select id="pianoModel" class="select-piano">
-      <option value="steinway">🎹 Steinway D Concert Grand ($2.5M)</option>
-      <option value="fazioli">✨ Fazioli F308 Brunei ($1.2M)</option>
-      <option value="bosendorfer">🏛️ Bösendorfer 290 Imperial ($1.2M)</option>
-    </select>
-
-    <div class="echo-control">
-      <span>اکو و تالار:</span>
-      <input type="range" id="echoSlider" min="0" max="100" value="68" />
+  <!-- پنل کنسول ارگ حرفه‌ای یاماها -->
+  <div class="yamaha-console">
+    <div class="brand-badge">
+      <span class="brand-title">YAMAHA GENOS</span>
+      <span class="brand-sub">ARRANGER WORKSTATION</span>
     </div>
 
-    <button class="btn active" id="sustainBtn">پدال Sustain (Space): روشن</button>
-    <button class="btn" id="addOrbBtn">+ گوی متحرک</button>
-    <button class="btn" id="clearOrbsBtn">حذف گوی‌ها</button>
-    <button class="btn" id="clearScoreBtn">پاک کردن نت‌ها</button>
-    <span class="hint">دکمه‌های کیبورد (A تا ; و W E T Y U O P) را نگه دارید تا صدا کشیده شود</span>
+    <!-- نمایشگر دیجیتال LCD -->
+    <div class="lcd-screen">
+      <div class="lcd-top">
+        <span id="lcdVoice">VOICE: CFX Grand</span>
+        <span id="lcdTempo">TEMPO: 115</span>
+      </div>
+      <div class="lcd-main" id="lcdStatus">READY - SELECT A SONG OR PLAY</div>
+      <div class="lcd-bottom">
+        <span id="lcdStyle">STYLE: Persian 6/8</span>
+        <span id="lcdNote">NOTE: --</span>
+      </div>
+    </div>
+
+    <!-- انتخاب ساز (Voices) -->
+    <div class="control-group">
+      <span class="group-label">ساز:</span>
+      <select id="voiceSelect" class="y-select gold">
+        <option value="cfx_piano">🎹 پیانو رویال (Yamaha CFX Grand)</option>
+        <option value="santoor">🎼 سنتور ایرانی (Persian Santoor)</option>
+        <option value="strings">🎻 ویولن و ارکستر زهی (Cinema Strings)</option>
+        <option value="sax">🎷 ساکسیفون تنور (Sweet! Tenor Sax)</option>
+        <option value="accordion">🪗 آکاردئون فرانسوی/ایرانی (Accordion)</option>
+        <option value="organ">🎹 ارگ جاز و کلیسایی (Vintage Organ)</option>
+        <option value="guitar">🎸 گیتار اسپانیش (Nylon Guitar)</option>
+        <option value="synth">⚡ سینت‌سایزر شاد مجلسی (Lead Synth)</option>
+      </select>
+    </div>
+
+    <!-- انتخاب موزیک پیش‌فرض ایرانی و خارجی -->
+    <div class="control-group">
+      <span class="group-label">آهنگ‌ها:</span>
+      <select id="songSelect" class="y-select cyan">
+        <optgroup label="🇮🇷 آهنگ‌های ایرانی">
+          <option value="soltan">🇮🇷 سلطان قلب‌ها (عارف)</option>
+          <option value="goldoon">🇮🇷 گل گلدون من (سیمین غانم)</option>
+          <option value="janemaryam">🇮🇷 جان مریم (محمد نوری)</option>
+          <option value="elahenaz">🇮🇷 الهه ناز (غلامحسین بنان)</option>
+          <option value="persian68">🇮🇷 رقص شاد ۶/۸ مجلسی ایرانی</option>
+        </optgroup>
+        <optgroup label="🌍 آهنگ‌های معروف خارجی">
+          <option value="furelise">🌍 Für Elise (بتهوون)</option>
+          <option value="bellaciao">🌍 Bella Ciao (بلا چاو - ایتالیایی)</option>
+          <option value="godfather">🌍 The Godfather (پدرخوانده)</option>
+          <option value="odetojoy">🌍 Ode to Joy (سمفونی نهم بتهوون)</option>
+          <option value="mozart">🌍 Romance / Mozart Variation</option>
+        </optgroup>
+      </select>
+      <button class="y-btn play-song" id="playSongBtn">▶ پخش آهنگ</button>
+    </div>
+
+    <!-- انتخاب ریتم و درام اتوماتیک -->
+    <div class="control-group">
+      <span class="group-label">ریتم:</span>
+      <select id="styleSelect" class="y-select">
+        <option value="persian68">🥁 ۶/۸ شاد ایرانی (Persian 6/8)</option>
+        <option value="bandari">🔥 بندری (Bandari Groove)</option>
+        <option value="waltz">💃 والس ۳/۴ (Slow Waltz)</option>
+        <option value="pop8">🎵 پاپ ۸ بیت (8-Beat Pop)</option>
+        <option value="dance">⚡ تکنو / دنس (Euro Dance)</option>
+      </select>
+      <button class="y-btn rhythm-btn" id="rhythmToggleBtn">شروع ریتم</button>
+      <button class="y-btn fill-btn" id="fillInBtn">پاساژ (Fill-In)</button>
+    </div>
+
+    <!-- تنظیمات تمپو، اکو، ترنسپوز و گوی‌ها -->
+    <div class="control-group">
+      <div class="slider-box">
+        <span>تمپو:</span>
+        <input type="range" id="tempoSlider" min="65" max="175" value="115" />
+      </div>
+      <div class="slider-box">
+        <span>اکو:</span>
+        <input type="range" id="echoSlider" min="0" max="100" value="65" />
+      </div>
+      <button class="y-btn active-blue" id="sustainBtn">Sustain: روشن</button>
+      <button class="y-btn" id="addOrbBtn">+ گوی</button>
+      <button class="y-btn" id="clearScoreBtn">پاک کردن نت</button>
+    </div>
   </div>
 
-  <!-- بوم رسم سیم‌ها، درام، گوی‌های متحرک و خطوط حامل نت -->
+  <!-- بوم گرافیکی -->
   <canvas id="stage"></canvas>
 
-  <!-- کلاویه‌های پیانو -->
+  <!-- کلاویه‌های ۲۲تایی ارگ -->
   <div class="piano-wrapper" id="pianoBox">
     <div class="piano-keys" id="pianoKeysContainer"></div>
   </div>
 
   <script>
-    // ۱. تعریف کلاویه‌ها
+    // ۱. تعریف ۲۲ کلاویه (از C4 تا A5) برای پوشش کامل تمام آهنگ‌های ایرانی و خارجی
     const PIANO_NOTES = [
       { note: 'C4',  freq: 261.63, black: false, code: 'KeyA',      label: 'A', step: -2, sharp: false, wIdx: 0 },
       { note: 'C#4', freq: 277.18, black: true,  code: 'KeyW',      label: 'W', step: -2, sharp: true,  afterW: 0 },
@@ -271,45 +448,174 @@
       { note: 'C#5', freq: 554.37, black: true,  code: 'KeyO',      label: 'O', step: 5,  sharp: true,  afterW: 7 },
       { note: 'D5',  freq: 587.33, black: false, code: 'KeyL',      label: 'L', step: 6,  sharp: false, wIdx: 8 },
       { note: 'D#5', freq: 622.25, black: true,  code: 'KeyP',      label: 'P', step: 6,  sharp: true,  afterW: 8 },
-      { note: 'E5',  freq: 659.25, black: false, code: 'Semicolon', label: ';', step: 7,  sharp: false, wIdx: 9 }
+      { note: 'E5',  freq: 659.25, black: false, code: 'Semicolon', label: ';', step: 7,  sharp: false, wIdx: 9 },
+      { note: 'F5',  freq: 698.46, black: false, code: 'Quote',     label: "'", step: 8,  sharp: false, wIdx: 10 },
+      { note: 'F#5', freq: 739.99, black: true,  code: 'BracketLeft',label: '[',step: 8,  sharp: true,  afterW: 10 },
+      { note: 'G5',  freq: 783.99, black: false, code: 'KeyZ',      label: 'Z', step: 9,  sharp: false, wIdx: 11 },
+      { note: 'G#5', freq: 830.61, black: true,  code: 'BracketRight',label:']',step: 9,  sharp: true,  afterW: 11 },
+      { note: 'A5',  freq: 880.00, black: false, code: 'KeyX',      label: 'X', step: 10, sharp: false, wIdx: 12 }
     ];
 
-    // ۲. ساخت کلاویه‌های پیانو در DOM با پشتیبانی از نگه‌داشتن کلید ماوس
+    const NOTE_BY_NAME = {};
+    PIANO_NOTES.forEach(n => { NOTE_BY_NAME[n.note] = n; });
+
+    // ۲. بانک ۱۰ آهنگ پیش‌فرض ایرانی و خارجی (نت + دیرند زمانی بر حسب ضریب بیت)
+    const SONG_LIBRARY = {
+      soltan: {
+        title: 'سلطان قلب‌ها - عارف',
+        voice: 'strings',
+        style: 'waltz',
+        tempo: 112,
+        notes: [
+          ['E4',1], ['A4',2], ['B4',1], ['C5',2], ['B4',1], ['A4',2], ['B4',1], ['C5',2], ['D5',1], ['E5',3],
+          ['D5',1], ['C5',2], ['B4',1], ['A4',2], ['G#4',1], ['B4',2], ['A4',1], ['G#4',2], ['E4',1], ['A4',3],
+          ['C5',1], ['E5',2], ['F5',1], ['G5',2], ['F5',1], ['E5',3],
+          ['D5',1], ['F5',2], ['E5',1], ['D5',2], ['C5',1], ['B4',3],
+          ['A4',1], ['C5',2], ['B4',1], ['A4',2], ['G#4',1], ['B4',2], ['A4',3]
+        ]
+      },
+      goldoon: {
+        title: 'گل گلدون من - سیمین غانم',
+        voice: 'santoor',
+        style: 'persian68',
+        tempo: 118,
+        notes: [
+          ['E4',1], ['A4',1.5], ['B4',0.5], ['C5',1], ['B4',1], ['A4',1.5], ['G4',0.5], ['A4',2],
+          ['A4',1], ['D5',1.5], ['C5',0.5], ['B4',1], ['A4',1], ['G4',1.5], ['F4',0.5], ['E4',2],
+          ['E4',1], ['F4',1], ['G4',1], ['A4',1.5], ['B4',0.5], ['C5',1], ['B4',2],
+          ['C5',1], ['B4',1], ['A4',1], ['G4',1.5], ['F4',0.5], ['G4',1], ['A4',3]
+        ]
+      },
+      janemaryam: {
+        title: 'جان مریم چشماتو وا کن',
+        voice: 'accordion',
+        style: 'persian68',
+        tempo: 110,
+        notes: [
+          ['E5',1.5], ['D5',0.5], ['C5',1], ['B4',1], ['A4',2], ['A4',1],
+          ['C5',1.5], ['B4',0.5], ['A4',1], ['G4',1], ['A4',2.5],
+          ['A4',1], ['B4',1], ['C5',1.5], ['D5',0.5], ['E5',1.5], ['D5',0.5], ['C5',2],
+          ['D5',1], ['C5',1], ['B4',1.5], ['A4',0.5], ['G4',1.5], ['B4',0.5], ['A4',3]
+        ]
+      },
+      elahenaz: {
+        title: 'الهه ناز - بنان',
+        voice: 'santoor',
+        style: 'waltz',
+        tempo: 102,
+        notes: [
+          ['A4',1], ['D5',2], ['E5',1], ['F5',2], ['E5',1], ['D5',2], ['C5',1], ['A#4',2], ['A4',2],
+          ['G4',1], ['A#4',2], ['A4',1], ['G4',2], ['F4',1], ['E4',2], ['D4',3],
+          ['F4',1], ['G4',1], ['A4',2], ['A#4',1], ['C5',2], ['D5',2],
+          ['C5',1], ['A#4',1], ['A4',2], ['G4',1], ['F4',1], ['E4',1], ['D4',3]
+        ]
+      },
+      persian68: {
+        title: 'رقص شاد ۶/۸ مجلسی ایرانی',
+        voice: 'synth',
+        style: 'persian68',
+        tempo: 138,
+        notes: [
+          ['A4',0.5], ['B4',0.5], ['C5',1], ['D5',0.5], ['C5',0.5], ['B4',1], ['A4',0.5], ['B4',0.5], ['C5',1], ['E5',1.5],
+          ['D5',0.5], ['E5',0.5], ['F5',1], ['E5',0.5], ['D5',0.5], ['C5',1], ['B4',0.5], ['C5',0.5], ['D5',1], ['B4',1.5],
+          ['C5',0.5], ['D5',0.5], ['E5',1], ['D5',0.5], ['C5',0.5], ['B4',1], ['A4',0.5], ['G4',0.5], ['A4',2]
+        ]
+      },
+      furelise: {
+        title: 'Für Elise - Beethoven',
+        voice: 'cfx_piano',
+        style: 'waltz',
+        tempo: 116,
+        notes: [
+          ['E5',0.5], ['D#5',0.5], ['E5',0.5], ['D#5',0.5], ['E5',0.5], ['B4',0.5], ['D5',0.5], ['C5',0.5], ['A4',1.5],
+          ['C4',0.5], ['E4',0.5], ['A4',0.5], ['B4',1.5], ['E4',0.5], ['G#4',0.5], ['B4',0.5], ['C5',1.5],
+          ['E4',0.5], ['E5',0.5], ['D#5',0.5], ['E5',0.5], ['D#5',0.5], ['E5',0.5], ['B4',0.5], ['D5',0.5], ['C5',0.5], ['A4',1.5],
+          ['C4',0.5], ['E4',0.5], ['A4',0.5], ['B4',1.5], ['E4',0.5], ['C5',0.5], ['B4',0.5], ['A4',2.5]
+        ]
+      },
+      bellaciao: {
+        title: 'Bella Ciao - Italian Folk',
+        voice: 'accordion',
+        style: 'dance',
+        tempo: 132,
+        notes: [
+          ['E4',0.5], ['A4',0.5], ['B4',0.5], ['C5',1], ['A4',1.5],
+          ['E4',0.5], ['A4',0.5], ['B4',0.5], ['C5',1], ['A4',1.5],
+          ['E4',0.5], ['A4',0.5], ['B4',0.5], ['C5',1], ['B4',0.5], ['A4',0.5], ['C5',1], ['B4',0.5], ['A4',0.5],
+          ['E5',1], ['E5',1], ['E5',1], ['D5',0.5], ['E5',0.5], ['F5',1.5], ['F5',0.5], ['F5',0.5], ['E5',0.5], ['D5',0.5], ['F5',0.5], ['E5',1.5],
+          ['E5',0.5], ['D5',0.5], ['C5',0.5], ['B4',1], ['E5',1], ['C5',1], ['B4',1], ['A4',2.5]
+        ]
+      },
+      godfather: {
+        title: 'The Godfather - Speak Softly Love',
+        voice: 'sax',
+        style: 'waltz',
+        tempo: 96,
+        notes: [
+          ['E4',0.7], ['A4',0.7], ['C5',0.7], ['B4',0.7], ['A4',0.7], ['C5',0.7], ['A4',0.7], ['B4',0.7], ['A4',0.7], ['F4',0.7], ['G4',0.7], ['E4',2.5],
+          ['E4',0.7], ['A4',0.7], ['C5',0.7], ['B4',0.7], ['A4',0.7], ['C5',0.7], ['A4',0.7], ['B4',0.7], ['A4',0.7], ['E4',0.7], ['D#4',0.7], ['D4',2.5],
+          ['D4',0.7], ['F4',0.7], ['G#4',0.7], ['B4',2.0], ['D4',0.7], ['F4',0.7], ['G#4',0.7], ['A4',2.5]
+        ]
+      },
+      odetojoy: {
+        title: 'Ode to Joy - Symphony No. 9',
+        voice: 'strings',
+        style: 'pop8',
+        tempo: 120,
+        notes: [
+          ['E4',1], ['E4',1], ['F4',1], ['G4',1], ['G4',1], ['F4',1], ['E4',1], ['D4',1],
+          ['C4',1], ['C4',1], ['D4',1], ['E4',1], ['E4',1.5], ['D4',0.5], ['D4',2],
+          ['E4',1], ['E4',1], ['F4',1], ['G4',1], ['G4',1], ['F4',1], ['E4',1], ['D4',1],
+          ['C4',1], ['C4',1], ['D4',1], ['E4',1], ['D4',1.5], ['C4',0.5], ['C4',2]
+        ]
+      },
+      mozart: {
+        title: 'Spanish Romance / Classic Guitar',
+        voice: 'guitar',
+        style: 'waltz',
+        tempo: 108,
+        notes: [
+          ['B4',1], ['E4',0.5], ['G4',0.5], ['B4',1], ['E4',0.5], ['G4',0.5], ['B4',1], ['E4',0.5], ['G4',0.5],
+          ['B4',1], ['E4',0.5], ['G4',0.5], ['A4',1], ['E4',0.5], ['G4',0.5], ['G4',1], ['E4',0.5], ['F#4',0.5],
+          ['G4',1], ['E4',0.5], ['G4',0.5], ['E4',2.5]
+        ]
+      }
+    };
+
+    // ۳. ساخت کلاویه‌ها در DOM
     const keysContainer = document.getElementById('pianoKeysContainer');
     const keyElements = {};
     let mouseHeldKey = null;
 
     function buildPianoDOM() {
       keysContainer.innerHTML = '';
-      const isMobile = window.innerWidth <= 700;
-      const whiteWidth = isMobile ? 37 : 57;
-      const blackWidth = isMobile ? 22 : 34;
+      const isMobile = window.innerWidth <= 780;
+      const whiteWidth = isMobile ? 34 : 50;
+      const blackWidth = isMobile ? 20 : 30;
 
-      function attachPointerEvents(el, k) {
+      function attachEvents(el, k) {
         el.addEventListener('pointerdown', e => {
           e.stopPropagation();
           el.releasePointerCapture?.(e.pointerId);
           mouseHeldKey = k;
-          startPianoNote(k, true);
+          startNote(k, true, false);
         });
         el.addEventListener('pointerenter', e => {
           if (e.buttons === 1) {
-            if (mouseHeldKey && mouseHeldKey.code !== k.code) {
-              stopPianoNote(mouseHeldKey);
-            }
+            if (mouseHeldKey && mouseHeldKey.code !== k.code) stopNote(mouseHeldKey);
             mouseHeldKey = k;
-            startPianoNote(k, true);
+            startNote(k, true, false);
           }
         });
         el.addEventListener('pointerup', () => {
           if (mouseHeldKey && mouseHeldKey.code === k.code) {
-            stopPianoNote(k);
+            stopNote(k);
             mouseHeldKey = null;
           }
         });
         el.addEventListener('pointerleave', e => {
           if (e.buttons === 1 && mouseHeldKey && mouseHeldKey.code === k.code) {
-            stopPianoNote(k);
+            stopNote(k);
             mouseHeldKey = null;
           }
         });
@@ -319,7 +625,7 @@
         const el = document.createElement('div');
         el.className = 'key-white';
         el.innerHTML = `<span class="k-shortcut">${k.label}</span><span class="k-note">${k.note}</span>`;
-        attachPointerEvents(el, k);
+        attachEvents(el, k);
         keysContainer.appendChild(el);
         keyElements[k.code] = el;
       });
@@ -330,7 +636,7 @@
         const leftPx = (k.afterW + 1) * whiteWidth - (blackWidth / 2);
         el.style.left = leftPx + 'px';
         el.innerHTML = `<span class="k-shortcut">${k.label}</span><span class="k-note">${k.note}</span>`;
-        attachPointerEvents(el, k);
+        attachEvents(el, k);
         keysContainer.appendChild(el);
         keyElements[k.code] = el;
       });
@@ -338,73 +644,47 @@
 
     window.addEventListener('pointerup', () => {
       if (mouseHeldKey) {
-        stopPianoNote(mouseHeldKey);
+        stopNote(mouseHeldKey);
         mouseHeldKey = null;
       }
     });
 
-    // ۳. موتور صوتی پیشرفته پیانو با کشش واقعی (True Sustain) + Reverb تالار + Stereo Echo
+    // ۴. موتور صوتی ارگ یاماها (۸ ساز تخصصی + ریتم‌ساز + اکو و تالار کنسرت)
     let audioCtx = null;
     let dryBus = null;
-    let reverbSendGain = null;
-    let echoSendGain = null;
-    let echoFeedbackGain = null;
-    let masterCompressor = null;
+    let reverbSend = null;
+    let echoSend = null;
+    let echoFeedback = null;
 
+    let currentVoice = 'cfx_piano';
+    let currentStyle = 'persian68';
+    let tempoBPM = 115;
+    let echoAmount = 0.65;
     let sustainPedal = true;
-    let currentModel = 'steinway';
-    let echoAmount = 0.68;
 
-    // نگهداری صداهای فعال برای کنترل نگه‌داشتن و رها کردن هر کلاویه
     const activeVoices = {};
     const heldKeysSet = new Set();
 
-    const PIANO_PROFILES = {
-      steinway: {
-        detuneCents: 1.6,
-        inharmonicity: 0.00032,
-        harmonics: [1.0, 0.72, 0.45, 0.28, 0.18, 0.11, 0.07, 0.04],
-        brightness: 9.5,
-        holdDecay: 14.0, // ۱۴ ثانیه کشش طبیعی هنگام نگه داشتن دکمه
-        pedalDecay: 9.0,
-        hammerLevel: 0.25,
-        color: '#f59e0b'
-      },
-      fazioli: {
-        detuneCents: 1.1,
-        inharmonicity: 0.00024,
-        harmonics: [1.0, 0.85, 0.56, 0.36, 0.22, 0.14, 0.09, 0.05],
-        brightness: 13.5,
-        holdDecay: 13.5,
-        pedalDecay: 8.5,
-        hammerLevel: 0.32,
-        color: '#38bdf8'
-      },
-      bosendorfer: {
-        detuneCents: 2.1,
-        inharmonicity: 0.00040,
-        harmonics: [1.0, 0.82, 0.38, 0.20, 0.12, 0.06, 0.03, 0.015],
-        brightness: 6.8,
-        holdDecay: 16.0, // طنین بسیار عمیق و طولانی ارکسترال
-        pedalDecay: 10.5,
-        hammerLevel: 0.19,
-        color: '#a78bfa'
-      }
+    const VOICE_COLORS = {
+      cfx_piano: '#f59e0b',
+      santoor: '#fbbf24',
+      strings: '#a855f7',
+      sax: '#fb7185',
+      accordion: '#34d399',
+      organ: '#38bdf8',
+      guitar: '#f97316',
+      synth: '#ec4899'
     };
 
-    // ساخت پاسخ ضربه سه‌بعدی تالار کنسرت (Concert Hall Impulse Response)
-    function createHallImpulse(actx, duration = 3.8, decay = 2.5) {
+    function createHallImpulse(actx, duration = 3.5, decay = 2.4) {
       const rate = actx.sampleRate;
       const len = Math.floor(rate * duration);
       const buffer = actx.createBuffer(2, len, rate);
       for (let ch = 0; ch < 2; ch++) {
         const data = buffer.getChannelData(ch);
         for (let i = 0; i < len; i++) {
-          const t = i / len;
-          // بازتاب‌های اولیه تالار + طنین دمِ سالن
-          const early = i < rate * 0.08 ? Math.sin(i * 0.05) * 0.3 : 0;
-          const env = Math.pow(1 - t, decay);
-          data[i] = ((Math.random() * 2 - 1) * env + early * env) * 0.45;
+          const env = Math.pow(1 - i / len, decay);
+          data[i] = (Math.random() * 2 - 1) * env * 0.45;
         }
       }
       return buffer;
@@ -416,57 +696,45 @@
           const AudioCtx = window.AudioContext || window.webkitAudioContext;
           audioCtx = new AudioCtx();
 
-          masterCompressor = audioCtx.createDynamicsCompressor();
-          masterCompressor.threshold.setValueAtTime(-14, audioCtx.currentTime);
-          masterCompressor.knee.setValueAtTime(18, audioCtx.currentTime);
-          masterCompressor.ratio.setValueAtTime(3.5, audioCtx.currentTime);
+          const comp = audioCtx.createDynamicsCompressor();
+          comp.threshold.setValueAtTime(-14, audioCtx.currentTime);
+          comp.ratio.setValueAtTime(3.5, audioCtx.currentTime);
 
           dryBus = audioCtx.createGain();
           dryBus.gain.value = 0.85;
 
-          // ۱. بخش Reverb تالار کنسرت
-          const convolver = audioCtx.createConvolver();
-          convolver.buffer = createHallImpulse(audioCtx, 3.8, 2.3);
+          const conv = audioCtx.createConvolver();
+          conv.buffer = createHallImpulse(audioCtx, 3.6, 2.3);
 
-          reverbSendGain = audioCtx.createGain();
-          reverbSendGain.gain.value = echoAmount * 0.65;
+          reverbSend = audioCtx.createGain();
+          reverbSend.gain.value = echoAmount * 0.65;
 
-          // ۲. بخش Stereo Delay Echo (اکوی گرم و فضاساز)
-          const delayL = audioCtx.createDelay(2.0);
-          const delayR = audioCtx.createDelay(2.0);
-          delayL.delayTime.value = 0.26; // ۲۶۰ میلی‌ثانیه
-          delayR.delayTime.value = 0.38; // ۳۸۰ میلی‌ثانیه
+          const delay = audioCtx.createDelay(2.0);
+          delay.delayTime.value = 0.27;
 
-          echoFeedbackGain = audioCtx.createGain();
-          echoFeedbackGain.gain.value = 0.38 * echoAmount;
+          echoFeedback = audioCtx.createGain();
+          echoFeedback.gain.value = echoAmount * 0.36;
 
           const echoFilter = audioCtx.createBiquadFilter();
           echoFilter.type = 'lowpass';
-          echoFilter.frequency.value = 2400; // اکوی گرم مثل چوب پیانو
+          echoFilter.frequency.value = 2400;
 
-          echoSendGain = audioCtx.createGain();
-          echoSendGain.gain.value = echoAmount * 0.38;
+          echoSend = audioCtx.createGain();
+          echoSend.gain.value = echoAmount * 0.35;
 
-          // اتصالات مسیر صدا
-          dryBus.connect(masterCompressor);
+          dryBus.connect(comp);
+          dryBus.connect(reverbSend);
+          reverbSend.connect(conv);
+          conv.connect(comp);
 
-          // مسیر Reverb
-          dryBus.connect(reverbSendGain);
-          reverbSendGain.connect(convolver);
-          convolver.connect(masterCompressor);
+          dryBus.connect(echoSend);
+          echoSend.connect(echoFilter);
+          echoFilter.connect(delay);
+          delay.connect(echoFeedback);
+          echoFeedback.connect(echoFilter);
+          delay.connect(comp);
 
-          // مسیر Echo
-          dryBus.connect(echoSendGain);
-          echoSendGain.connect(echoFilter);
-          echoFilter.connect(delayL);
-          delayL.connect(delayR);
-          delayR.connect(echoFeedbackGain);
-          echoFeedbackGain.connect(echoFilter); // حلقه بازخورد اکو
-
-          delayL.connect(masterCompressor);
-          delayR.connect(masterCompressor);
-
-          masterCompressor.connect(audioCtx.destination);
+          comp.connect(audioCtx.destination);
         }
         if (audioCtx.state === 'suspended') {
           audioCtx.resume();
@@ -474,154 +742,319 @@
       } catch (e) {}
     }
 
-    function updateEchoLevels(val) {
-      echoAmount = val;
-      if (!audioCtx) return;
-      const now = audioCtx.currentTime;
-      reverbSendGain.gain.setTargetAtTime(echoAmount * 0.72, now, 0.05);
-      echoSendGain.gain.setTargetAtTime(echoAmount * 0.42, now, 0.05);
-      echoFeedbackGain.gain.setTargetAtTime(Math.min(0.52, echoAmount * 0.46), now, 0.05);
-    }
-
-    // شروع نت پیانو (هنگام پایین نگه داشتن کلید)
-    function startPianoNote(k, isHeldByUser = true, hitY = null) {
+    // سنتز ۸ ساز حرفه‌ای یاماها با کشش واقعی هنگام نگه داشتن دکمه
+    function startNote(k, isHeldByUser = true, isAutoPlay = false) {
       try {
         ensureAudioReady();
         if (!audioCtx) return;
 
-        // اگر کاربر کلید را از قبل پایین نگه داشته، دوباره چکش نزند و اجازه دهد صدا کشیده شود
-        if (isHeldByUser && heldKeysSet.has(k.code)) return;
+        if (isHeldByUser && !isAutoPlay && heldKeysSet.has(k.code)) return;
 
-        // اگر صدای قبلی از همین کلید در حال پخش است، به نرمی جایگزین شود
         if (activeVoices[k.code]) {
-          fadeOutVoice(activeVoices[k.code], 0.06);
+          fadeOutVoice(activeVoices[k.code], 0.05);
         }
 
-        if (isHeldByUser) {
+        const el = keyElements[k.code];
+        if (isHeldByUser && !isAutoPlay) {
           heldKeysSet.add(k.code);
-          const el = keyElements[k.code];
           if (el) el.classList.add('playing');
-        } else {
-          const el = keyElements[k.code];
-          if (el) {
-            el.classList.add('playing');
-            setTimeout(() => {
-              if (!heldKeysSet.has(k.code)) el.classList.remove('playing');
-            }, 180);
-          }
+        } else if (el) {
+          const cls = isAutoPlay ? 'auto-playing' : 'playing';
+          el.classList.add(cls);
+          setTimeout(() => {
+            if (!heldKeysSet.has(k.code)) el.classList.remove(cls);
+          }, 220);
         }
+
+        document.getElementById('lcdNote').textContent = `NOTE: ${k.note}`;
 
         const now = audioCtx.currentTime;
-        const prof = PIANO_PROFILES[currentModel];
         const freq = k.freq;
-
-        // گین اصلی این نت (پوش دو مرحله‌ای پیانوی واقعی: ضربه اولیه + کشش طولانیِ سیم)
         const voiceGain = audioCtx.createGain();
-        voiceGain.gain.setValueAtTime(0.0001, now);
-        // ۱. حمله سریع چکش
-        voiceGain.gain.linearRampToValueAtTime(0.34, now + 0.009);
-        // ۲. تثبیت روی طنین گرمِ صفحه صدا (Singing Sustain)
-        voiceGain.gain.exponentialRampToValueAtTime(0.21, now + 0.35);
-        // ۳. کشیده شدن طولانی تا ۱۴-۱۶ ثانیه مادامی که کلید نگه داشته شده است
-        const maxHoldTime = isHeldByUser ? prof.holdDecay : prof.pedalDecay;
-        voiceGain.gain.exponentialRampToValueAtTime(0.0008, now + maxHoldTime);
-
-        // فیلتر پویا برای صفحه صدای چوب صنوبر پیانو (Soundboard Filter)
-        const sbFilter = audioCtx.createBiquadFilter();
-        sbFilter.type = 'lowpass';
-        sbFilter.frequency.setValueAtTime(Math.min(freq * prof.brightness, 15000), now);
-        sbFilter.frequency.exponentialRampToValueAtTime(Math.max(freq * 3.2, 650), now + 1.8);
-        sbFilter.frequency.exponentialRampToValueAtTime(Math.max(freq * 1.6, 380), now + maxHoldTime);
-
-        voiceGain.connect(sbFilter);
-        sbFilter.connect(dryBus);
-
         const oscillators = [];
+        let maxHold = 12.0;
 
-        // الف) ۳ سیمِ هم‌صدا (Unison Triple Strings) برای ایجاد موج و کشش زنده پیانو رویال
-        const unisonDetunes = [-prof.detuneCents, 0, +prof.detuneCents];
-        unisonDetunes.forEach((cents, idx) => {
-          const osc = audioCtx.createOscillator();
-          const uGain = audioCtx.createGain();
-          osc.type = idx === 1 ? 'triangle' : 'sine';
-          osc.frequency.setValueAtTime(freq, now);
-          osc.detune.setValueAtTime(cents, now);
+        if (currentVoice === 'cfx_piano') {
+          // ۱. پیانو رویال یاماها CFX
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.32, now + 0.008);
+          voiceGain.gain.exponentialRampToValueAtTime(0.18, now + 0.4);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0008, now + 13.0);
 
-          uGain.gain.setValueAtTime(idx === 1 ? 0.55 : 0.38, now);
-          osc.connect(uGain);
-          uGain.connect(voiceGain);
-          osc.start(now);
-          osc.stop(now + maxHoldTime + 0.5);
-          oscillators.push(osc);
-        });
+          const lp = audioCtx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.setValueAtTime(Math.min(freq * 9.5, 14000), now);
+          lp.frequency.exponentialRampToValueAtTime(Math.max(freq * 1.8, 450), now + 10.0);
+          voiceGain.connect(lp);
+          lp.connect(dryBus);
 
-        // ب) هارمونیک‌های طبیعی سیم فولادی پیانو (Overtones 2..8)
-        prof.harmonics.forEach((amp, i) => {
-          if (i === 0) return; // فرکانس پایه در ۳ سیم بالا ساخته شد
-          const n = i + 1;
-          const partialFreq = freq * n * Math.sqrt(1 + prof.inharmonicity * n * n);
-          if (partialFreq > 15500) return;
+          [-1.5, 0, 1.5].forEach((det, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = idx === 1 ? 'triangle' : 'sine';
+            o.frequency.setValueAtTime(freq, now);
+            o.detune.setValueAtTime(det, now);
+            g.gain.value = idx === 1 ? 0.55 : 0.35;
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + 13.5);
+            oscillators.push(o);
+          });
 
-          const osc = audioCtx.createOscillator();
-          const pGain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(partialFreq, now);
-          if (n <= 3) osc.detune.setValueAtTime(prof.detuneCents * 0.7, now);
+          [2, 3, 4, 5].forEach(n => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(freq * n, now);
+            g.gain.setValueAtTime(0.35 / n, now);
+            g.gain.exponentialRampToValueAtTime(0.0005, now + 6.0 / n);
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + 6.5 / n);
+            oscillators.push(o);
+          });
 
-          // هارمونیک‌های بالاتر به مرور گرم‌تر می‌شوند
-          const pDecay = Math.max(0.6, maxHoldTime / Math.pow(n, 0.72));
-          pGain.gain.setValueAtTime(amp * 0.65, now);
-          pGain.gain.exponentialRampToValueAtTime(0.0005, now + pDecay);
+        } else if (currentVoice === 'santoor') {
+          // ۲. سنتور ایرانی (چهار مضراب با طنین سیم‌های برنجی/فولادی)
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.34, now + 0.004);
+          voiceGain.gain.exponentialRampToValueAtTime(0.12, now + 0.35);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0008, now + 7.5);
 
-          osc.connect(pGain);
-          pGain.connect(voiceGain);
-          osc.start(now);
-          osc.stop(now + pDecay + 0.2);
-          oscillators.push(osc);
-        });
+          const bp = audioCtx.createBiquadFilter();
+          bp.type = 'peaking';
+          bp.frequency.value = freq * 3;
+          bp.gain.value = 6;
+          voiceGain.connect(bp);
+          bp.connect(dryBus);
 
-        // ج) صدای ضربه چکش نمدی (Felt Hammer Thump)
-        const hammerLen = Math.floor(audioCtx.sampleRate * 0.022);
-        const hammerBuf = audioCtx.createBuffer(1, hammerLen, audioCtx.sampleRate);
-        const hData = hammerBuf.getChannelData(0);
-        for (let i = 0; i < hammerLen; i++) {
-          hData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / hammerLen, 2.2);
+          [-2.2, 2.2].forEach(det => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'sawtooth';
+            o.frequency.setValueAtTime(freq, now);
+            o.detune.setValueAtTime(det, now);
+            g.gain.value = 0.24;
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + 8.0);
+            oscillators.push(o);
+          });
+
+          // صدای ضربه مضراب چوبی سنتور
+          const mOsc = audioCtx.createOscillator();
+          const mGain = audioCtx.createGain();
+          mOsc.type = 'triangle';
+          mOsc.frequency.setValueAtTime(freq * 6, now);
+          mOsc.frequency.exponentialRampToValueAtTime(freq * 2, now + 0.018);
+          mGain.gain.setValueAtTime(0.25, now);
+          mGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+          mOsc.connect(mGain);
+          mGain.connect(dryBus);
+          mOsc.start(now);
+          mOsc.stop(now + 0.025);
+
+        } else if (currentVoice === 'strings') {
+          // ۳. ویولن و ارکستر زهی با کشش بی‌نهایت تا زمانی که دکمه را نگه دارید
+          maxHold = 30.0;
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.26, now + 0.09); // حمله نرم آرشه ویولن
+          voiceGain.gain.setValueAtTime(0.26, now + 0.1);
+
+          const lp = audioCtx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.value = Math.min(freq * 5.5, 6500);
+          voiceGain.connect(lp);
+          lp.connect(dryBus);
+
+          [-7, 0, 7].forEach(det => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'sawtooth';
+            o.frequency.setValueAtTime(freq, now);
+            o.detune.setValueAtTime(det, now);
+            g.gain.value = 0.24;
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + maxHold);
+            oscillators.push(o);
+          });
+
+        } else if (currentVoice === 'sax') {
+          // ۴. ساکسیفون تنور با ویبراتوی طبیعی
+          maxHold = 25.0;
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.30, now + 0.045);
+
+          const bp = audioCtx.createBiquadFilter();
+          bp.type = 'lowpass';
+          bp.frequency.setValueAtTime(freq * 4.2, now);
+          bp.Q.value = 2.4;
+          voiceGain.connect(bp);
+          bp.connect(dryBus);
+
+          const o1 = audioCtx.createOscillator();
+          const o2 = audioCtx.createOscillator();
+          o1.type = 'sawtooth';
+          o2.type = 'square';
+          o1.frequency.setValueAtTime(freq, now);
+          o2.frequency.setValueAtTime(freq, now);
+
+          // ویبراتوی ساکسیفون (LFO)
+          const lfo = audioCtx.createOscillator();
+          const lfoGain = audioCtx.createGain();
+          lfo.frequency.value = 5.5;
+          lfoGain.gain.value = 4.5;
+          lfo.connect(lfoGain);
+          lfoGain.connect(o1.frequency);
+          lfoGain.connect(o2.frequency);
+          lfo.start(now);
+          lfo.stop(now + maxHold);
+
+          const g1 = audioCtx.createGain();
+          const g2 = audioCtx.createGain();
+          g1.gain.value = 0.35;
+          g2.gain.value = 0.22;
+          o1.connect(g1);
+          o2.connect(g2);
+          g1.connect(voiceGain);
+          g2.connect(voiceGain);
+          o1.start(now);
+          o2.start(now);
+          o1.stop(now + maxHold);
+          o2.stop(now + maxHold);
+          oscillators.push(o1, o2, lfo);
+
+        } else if (currentVoice === 'accordion') {
+          // ۵. آکاردئون فرانسوی / ایرانی (Musette)
+          maxHold = 25.0;
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.28, now + 0.03);
+
+          const lp = audioCtx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.value = 3800;
+          voiceGain.connect(lp);
+          lp.connect(dryBus);
+
+          [-10, 0, 10].forEach((det, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = idx === 1 ? 'square' : 'sawtooth';
+            o.frequency.setValueAtTime(freq, now);
+            o.detune.setValueAtTime(det, now);
+            g.gain.value = 0.24;
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + maxHold);
+            oscillators.push(o);
+          });
+
+        } else if (currentVoice === 'organ') {
+          // ۶. ارگ جاز و کلیسایی یاماها (Drawbar Organ)
+          maxHold = 30.0;
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.28, now + 0.015);
+          voiceGain.connect(dryBus);
+
+          [0.5, 1, 1.5, 2, 3, 4].forEach((mult, idx) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(freq * mult, now);
+            const amps = [0.35, 0.55, 0.25, 0.35, 0.18, 0.15];
+            g.gain.value = amps[idx];
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + maxHold);
+            oscillators.push(o);
+          });
+
+        } else if (currentVoice === 'guitar') {
+          // ۷. گیتار کلاسیک اسپانیش
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.35, now + 0.006);
+          voiceGain.gain.exponentialRampToValueAtTime(0.12, now + 0.3);
+          voiceGain.gain.exponentialRampToValueAtTime(0.0008, now + 6.5);
+
+          const lp = audioCtx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.setValueAtTime(freq * 6, now);
+          lp.frequency.exponentialRampToValueAtTime(freq * 1.4, now + 2.5);
+          voiceGain.connect(lp);
+          lp.connect(dryBus);
+
+          const o1 = audioCtx.createOscillator();
+          const o2 = audioCtx.createOscillator();
+          o1.type = 'triangle';
+          o2.type = 'sawtooth';
+          o1.frequency.setValueAtTime(freq, now);
+          o2.frequency.setValueAtTime(freq * 2, now);
+          const g2 = audioCtx.createGain();
+          g2.gain.setValueAtTime(0.25, now);
+          g2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          o1.connect(voiceGain);
+          o2.connect(g2);
+          g2.connect(voiceGain);
+          o1.start(now);
+          o2.start(now);
+          o1.stop(now + 6.8);
+          o2.stop(now + 0.7);
+          oscillators.push(o1, o2);
+
+        } else if (currentVoice === 'synth') {
+          // ۸. سینت‌سایزر لید شاد مجلسی
+          maxHold = 25.0;
+          voiceGain.gain.setValueAtTime(0.0001, now);
+          voiceGain.gain.linearRampToValueAtTime(0.28, now + 0.012);
+
+          const lp = audioCtx.createBiquadFilter();
+          lp.type = 'lowpass';
+          lp.frequency.setValueAtTime(freq * 9, now);
+          lp.Q.value = 3.2;
+          voiceGain.connect(lp);
+          lp.connect(dryBus);
+
+          [-8, 8].forEach(det => {
+            const o = audioCtx.createOscillator();
+            o.type = 'sawtooth';
+            o.frequency.setValueAtTime(freq, now);
+            o.detune.setValueAtTime(det, now);
+            const g = audioCtx.createGain();
+            g.gain.value = 0.3;
+            o.connect(g);
+            g.connect(voiceGain);
+            o.start(now);
+            o.stop(now + maxHold);
+            oscillators.push(o);
+          });
         }
-        const hammerSrc = audioCtx.createBufferSource();
-        hammerSrc.buffer = hammerBuf;
-        const hFilter = audioCtx.createBiquadFilter();
-        hFilter.type = 'bandpass';
-        hFilter.frequency.setValueAtTime(Math.min(freq * 3.8, 3800), now);
-        const hGain = audioCtx.createGain();
-        hGain.gain.setValueAtTime(prof.hammerLevel, now);
-        hammerSrc.connect(hFilter);
-        hFilter.connect(hGain);
-        hGain.connect(dryBus);
-        hammerSrc.start(now);
 
-        // ثبت در لیست صداهای فعال و ایجاد نت در دفتر نت پایین
-        const profileColor = prof.color;
-        const noteColor = k.black ? '#38bdf8' : profileColor;
-
+        const noteColor = isAutoPlay ? '#10b981' : (VOICE_COLORS[currentVoice] || '#f59e0b');
         const scoreNoteObj = addSheetNote(k.note, k.step, k.sharp, noteColor, false, isHeldByUser);
 
         activeVoices[k.code] = {
           code: k.code,
           voiceGain,
           oscillators,
-          scoreNote: scoreNoteObj,
-          released: !isHeldByUser
+          scoreNote: scoreNoteObj
         };
 
-        // ارتعاش اولیه سیم
+        // ارتعاش سیم متناظر
         const sLine = stringLines.find(s => s.keyObj.code === k.code);
         if (sLine) {
-          sLine.amp = 16;
+          sLine.amp = 15;
           ripples.push({
             x: sLine.x,
-            y: hitY || (sLine.y2 - 18),
+            y: sLine.y2 - 18,
             r: 5,
-            maxR: 34,
+            maxR: 32,
             color: noteColor,
             alpha: 0.9
           });
@@ -629,7 +1062,7 @@
       } catch (e) {}
     }
 
-    function fadeOutVoice(voice, releaseTime = 0.42) {
+    function fadeOutVoice(voice, releaseTime = 0.35) {
       if (!voice || !audioCtx) return;
       try {
         const now = audioCtx.currentTime;
@@ -641,93 +1074,253 @@
           voice.oscillators.forEach(o => {
             try { o.stop(); } catch (e) {}
           });
-        }, releaseTime * 1000 + 80);
+        }, releaseTime * 1000 + 60);
       } catch (e) {}
     }
 
-    // رها کردن کلید پیانو
-    function stopPianoNote(k) {
+    function stopNote(k) {
       heldKeysSet.delete(k.code);
       const el = keyElements[k.code];
-      if (el) el.classList.remove('playing');
+      if (el) el.classList.remove('playing', 'auto-playing');
 
       const voice = activeVoices[k.code];
       if (voice) {
-        voice.released = true;
-        if (voice.scoreNote) {
-          voice.scoreNote.beingHeld = false;
-        }
-        // اگر پدال Sustain خاموش است، نمد خفه‌کن روی سیم قرار می‌گیرد (اما اکو در سالن می‌ماند)
-        // اگر پدال Sustain روشن است، سیم همچنان با طنین طبیعی کشیده می‌شود
-        if (!sustainPedal) {
-          fadeOutVoice(voice, 0.45);
-          delete activeVoices[k.code];
-        } else {
-          fadeOutVoice(voice, 4.5);
-          delete activeVoices[k.code];
-        }
+        if (voice.scoreNote) voice.scoreNote.beingHeld = false;
+        const sustainedInstrument = ['strings', 'sax', 'accordion', 'organ', 'synth'].includes(currentVoice);
+        const rel = sustainedInstrument
+          ? (sustainPedal ? 0.85 : 0.22)
+          : (sustainPedal ? 3.2 : 0.38);
+        fadeOutVoice(voice, rel);
+        delete activeVoices[k.code];
       }
     }
 
-    function playDrumSound(type) {
+    // ۵. موتور درام و ریتم‌ساز اتوماتیک یاماها (Persian 6/8, Bandari, Waltz, Pop, Dance)
+    function playPercussion(type) {
       try {
         ensureAudioReady();
         if (!audioCtx) return;
         const now = audioCtx.currentTime;
 
         if (type === 'kick') {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(130, now);
-          osc.frequency.exponentialRampToValueAtTime(38, now + 0.16);
-          gain.gain.setValueAtTime(0.55, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
-          osc.connect(gain);
-          gain.connect(dryBus);
-          osc.start(now);
-          osc.stop(now + 0.4);
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(135, now);
+          o.frequency.exponentialRampToValueAtTime(38, now + 0.14);
+          g.gain.setValueAtTime(0.55, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+          o.connect(g);
+          g.connect(dryBus);
+          o.start(now);
+          o.stop(now + 0.34);
+          if (drums[0]) drums[0].pulse = 1;
         } else if (type === 'snare') {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(210, now);
-          osc.frequency.exponentialRampToValueAtTime(85, now + 0.12);
-          gain.gain.setValueAtTime(0.35, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
-          osc.connect(gain);
-          gain.connect(dryBus);
-          osc.start(now);
-          osc.stop(now + 0.17);
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'triangle';
+          o.frequency.setValueAtTime(210, now);
+          o.frequency.exponentialRampToValueAtTime(90, now + 0.1);
+          g.gain.setValueAtTime(0.32, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+          o.connect(g);
+          g.connect(dryBus);
+          o.start(now);
+          o.stop(now + 0.15);
+          if (drums[1]) drums[1].pulse = 1;
+        } else if (type === 'tom') {
+          // صدای تنبک / بک برای ریتم ۶/۸ و بندری
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'sine';
+          o.frequency.setValueAtTime(320, now);
+          o.frequency.exponentialRampToValueAtTime(145, now + 0.08);
+          g.gain.setValueAtTime(0.34, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+          o.connect(g);
+          g.connect(dryBus);
+          o.start(now);
+          o.stop(now + 0.11);
+          if (drums[1]) drums[1].pulse = 0.8;
         } else if (type === 'hihat') {
-          const bufLen = Math.floor(audioCtx.sampleRate * 0.06);
-          const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
-          const data = buf.getChannelData(0);
-          for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+          const len = Math.floor(audioCtx.sampleRate * 0.05);
+          const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+          const d = buf.getChannelData(0);
+          for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
           const src = audioCtx.createBufferSource();
           src.buffer = buf;
           const hp = audioCtx.createBiquadFilter();
           hp.type = 'highpass';
-          hp.frequency.setValueAtTime(6500, now);
-          const gain = audioCtx.createGain();
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          hp.frequency.value = 6800;
+          const g = audioCtx.createGain();
+          g.gain.setValueAtTime(0.18, now);
+          g.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
           src.connect(hp);
-          hp.connect(gain);
-          gain.connect(dryBus);
+          hp.connect(g);
+          g.connect(dryBus);
           src.start(now);
+          if (drums[2]) drums[2].pulse = 1;
         }
       } catch (e) {}
     }
 
-    // ۴. مدیریت صحنه، سیم‌ها، گوی‌ها و دفتر نت
+    let rhythmTimer = null;
+    let rhythmStep = 0;
+    let rhythmRunning = false;
+
+    const RHYTHM_PATTERNS = {
+      persian68: [
+        ['kick'], ['hihat'], ['tom'], ['snare'], ['hihat'], ['tom']
+      ],
+      bandari: [
+        ['kick'], ['tom'], ['hihat', 'tom'], ['snare'], ['kick'], ['tom', 'snare']
+      ],
+      waltz: [
+        ['kick'], ['hihat'], ['hihat'], ['kick'], ['snare'], ['hihat']
+      ],
+      pop8: [
+        ['kick'], ['hihat'], ['snare'], ['hihat'], ['kick'], ['kick'], ['snare'], ['hihat']
+      ],
+      dance: [
+        ['kick'], ['hihat'], ['kick', 'snare'], ['hihat'], ['kick'], ['hihat'], ['kick', 'snare'], ['tom']
+      ]
+    };
+
+    function startRhythmEngine() {
+      stopRhythmEngine();
+      rhythmRunning = true;
+      rhythmStep = 0;
+      const btn = document.getElementById('rhythmToggleBtn');
+      btn.textContent = 'توقف ریتم ■';
+      btn.classList.add('active');
+
+      function tick() {
+        if (!rhythmRunning) return;
+        const pat = RHYTHM_PATTERNS[currentStyle] || RHYTHM_PATTERNS.persian68;
+        const hits = pat[rhythmStep % pat.length];
+        hits.forEach(h => playPercussion(h));
+        rhythmStep++;
+
+        const stepMs = (60000 / tempoBPM) / 2;
+        rhythmTimer = setTimeout(tick, stepMs);
+      }
+      tick();
+    }
+
+    function stopRhythmEngine() {
+      rhythmRunning = false;
+      if (rhythmTimer) clearTimeout(rhythmTimer);
+      const btn = document.getElementById('rhythmToggleBtn');
+      btn.textContent = 'شروع ریتم';
+      btn.classList.remove('active');
+    }
+
+    // پاساژ درام حرفه‌ای (Fill-In)
+    function triggerFillIn() {
+      ensureAudioReady();
+      document.getElementById('lcdStatus').textContent = '🥁 DRUM FILL-IN!';
+      const seq = ['tom', 'tom', 'snare', 'tom', 'snare', 'kick', 'snare'];
+      seq.forEach((hit, idx) => {
+        setTimeout(() => playPercussion(hit), idx * 75);
+      });
+    }
+
+    // ۶. سیستم پخش خودکار آهنگ‌های پیش‌فرض ایرانی و خارجی (Auto-Play Sequencer)
+    let songPlaying = false;
+    let songTimer = null;
+    let songNoteIndex = 0;
+    let currentAutoKey = null;
+
+    function startAutoSong(songId) {
+      stopAutoSong();
+      const song = SONG_LIBRARY[songId];
+      if (!song) return;
+
+      // تنظیم خودکار ساز، ریتم و تمپوی پیشنهادی آهنگ
+      currentVoice = song.voice;
+      document.getElementById('voiceSelect').value = song.voice;
+
+      currentStyle = song.style;
+      document.getElementById('styleSelect').value = song.style;
+
+      tempoBPM = song.tempo;
+      document.getElementById('tempoSlider').value = song.tempo;
+      updateLCDInfo();
+
+      songPlaying = true;
+      songNoteIndex = 0;
+
+      const playBtn = document.getElementById('playSongBtn');
+      playBtn.textContent = '■ توقف آهنگ';
+      playBtn.classList.add('playing');
+      document.getElementById('lcdStatus').textContent = `🎵 PLAYING: ${song.title}`;
+
+      if (!rhythmRunning) startRhythmEngine();
+
+      function playNextNote() {
+        if (!songPlaying) return;
+
+        if (currentAutoKey) {
+          stopNote(currentAutoKey);
+          currentAutoKey = null;
+        }
+
+        const item = song.notes[songNoteIndex];
+        const noteName = item[0];
+        const beats = item[1];
+
+        const kObj = NOTE_BY_NAME[noteName];
+        if (kObj) {
+          currentAutoKey = kObj;
+          startNote(kObj, true, true);
+        }
+
+        songNoteIndex = (songNoteIndex + 1) % song.notes.length;
+        const durationMs = beats * (60000 / tempoBPM);
+
+        // رها کردن کلاویه کمی قبل از نت بعدی برای طبیعی شدن جمله موسیقی
+        setTimeout(() => {
+          if (currentAutoKey && currentAutoKey.note === noteName) {
+            stopNote(currentAutoKey);
+          }
+        }, Math.max(80, durationMs * 0.86));
+
+        songTimer = setTimeout(playNextNote, durationMs);
+      }
+
+      playNextNote();
+    }
+
+    function stopAutoSong() {
+      songPlaying = false;
+      if (songTimer) clearTimeout(songTimer);
+      if (currentAutoKey) {
+        stopNote(currentAutoKey);
+        currentAutoKey = null;
+      }
+      stopRhythmEngine();
+      const playBtn = document.getElementById('playSongBtn');
+      playBtn.textContent = '▶ پخش آهنگ';
+      playBtn.classList.remove('playing');
+      document.getElementById('lcdStatus').textContent = 'READY - SELECT A SONG OR PLAY';
+    }
+
+    function updateLCDInfo() {
+      const vSel = document.getElementById('voiceSelect');
+      const sSel = document.getElementById('styleSelect');
+      document.getElementById('lcdVoice').textContent = `VOICE: ${vSel.options[vSel.selectedIndex].text.split('(')[0]}`;
+      document.getElementById('lcdStyle').textContent = `STYLE: ${sSel.value.toUpperCase()}`;
+      document.getElementById('lcdTempo').textContent = `TEMPO: ${tempoBPM}`;
+    }
+
+    // ۷. مدیریت بوم گرافیکی (سیم‌ها، درام‌ها، گوی‌ها و دفتر نت پایین صفحه)
     const canvas = document.getElementById('stage');
     const ctx = canvas.getContext('2d');
     const pianoBox = document.getElementById('pianoBox');
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    let staffTop = height - 148;
+    let staffTop = height - 140;
 
     let stringLines = [];
     let drums = [];
@@ -739,12 +1332,12 @@
     function updateLayout() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      staffTop = height - 148;
+      staffTop = height - 140;
 
       buildPianoDOM();
 
       const boxRect = pianoBox.getBoundingClientRect();
-      const topLimit = 68;
+      const topLimit = 100;
       const bottomLimit = boxRect.top;
 
       stringLines = PIANO_NOTES.map(k => {
@@ -761,47 +1354,17 @@
         };
       });
 
-      const midY = (topLimit + bottomLimit) * 0.52;
+      const midY = (topLimit + bottomLimit) * 0.54;
       drums = [
-        {
-          id: 'kick',
-          label: 'KICK',
-          x: Math.max(65, boxRect.left * 0.5),
-          y: midY + 25,
-          r: 35,
-          color: '#fb7185',
-          step: 0,
-          pulse: 0,
-          cooldown: 0
-        },
-        {
-          id: 'snare',
-          label: 'SNARE',
-          x: Math.max(65, boxRect.left * 0.5),
-          y: midY - 55,
-          r: 29,
-          color: '#fbbf24',
-          step: 4,
-          pulse: 0,
-          cooldown: 0
-        },
-        {
-          id: 'hihat',
-          label: 'HI-HAT',
-          x: Math.min(width - 65, boxRect.right + (width - boxRect.right) * 0.5),
-          y: midY - 15,
-          r: 31,
-          color: '#34d399',
-          step: 8,
-          pulse: 0,
-          cooldown: 0
-        }
+        { id: 'kick',  label: 'KICK',   x: Math.max(55, boxRect.left * 0.5), y: midY + 25, r: 32, color: '#fb7185', step: 0, pulse: 0 },
+        { id: 'snare', label: 'TOM/SN', x: Math.max(55, boxRect.left * 0.5), y: midY - 48, r: 28, color: '#fbbf24', step: 4, pulse: 0 },
+        { id: 'hihat', label: 'HI-HAT', x: Math.min(width - 55, boxRect.right + (width - boxRect.right) * 0.5), y: midY - 12, r: 29, color: '#34d399', step: 8, pulse: 0 }
       ];
     }
 
     function addSheetNote(label, step, sharp, color, isDrum, beingHeld = false) {
-      const noteItem = {
-        x: width - 90,
+      const item = {
+        x: width - 85,
         label,
         step,
         sharp,
@@ -810,73 +1373,58 @@
         beingHeld,
         holdLength: 0
       };
-      sheetNotes.push(noteItem);
-      return noteItem;
-    }
-
-    function triggerKineticString(k, hitY) {
-      const now = performance.now();
-      if (stringCooldowns[k.code] && now - stringCooldowns[k.code] < 150) return;
-      stringCooldowns[k.code] = now;
-      startPianoNote(k, false, hitY);
-    }
-
-    function triggerDrum(d) {
-      if (d.cooldown > 0) return;
-      d.cooldown = 10;
-      d.pulse = 1;
-      playDrumSound(d.id);
-      addSheetNote(d.label, d.step, false, d.color, true, false);
-      ripples.push({ x: d.x, y: d.y, r: d.r * 0.8, maxR: d.r * 1.7, color: d.color, alpha: 0.85 });
+      sheetNotes.push(item);
+      return item;
     }
 
     function spawnOrb(x, y) {
       const dir = Math.random() < 0.5 ? 1 : -1;
       orbs.push({
         x: x ?? (width * 0.5),
-        y: y ?? 125,
-        vx: dir * (3.0 + Math.random() * 1.4),
-        vy: 2.1 + Math.random() * 1.1,
-        r: 8,
+        y: y ?? 145,
+        vx: dir * (2.8 + Math.random() * 1.4),
+        vy: 2.0 + Math.random() * 1.0,
+        r: 7.5,
         trail: []
       });
     }
 
-    // ۵. رویدادهای کیبورد کامپیوتر (نگه‌داشتن و رها کردن واقعی)
+    // ۸. ورودی کیبورد کامپیوتر (سازگار با کیبورد فارسی و انگلیسی)
     window.addEventListener('keydown', e => {
       ensureAudioReady();
-      if (e.repeat) return; // جلوگیری از قطع و وصل شدن هنگام نگه‌داشتن کلید
+      if (e.repeat) return;
 
       if (e.code === 'Space') {
         e.preventDefault();
         sustainPedal = !sustainPedal;
         const btn = document.getElementById('sustainBtn');
-        btn.textContent = `پدال Sustain (Space): ${sustainPedal ? 'روشن' : 'خاموش'}`;
-        btn.classList.toggle('active', sustainPedal);
+        btn.textContent = `Sustain: ${sustainPedal ? 'روشن' : 'خاموش'}`;
+        btn.classList.toggle('active-blue', sustainPedal);
         return;
       }
 
-      const matchedKey = PIANO_NOTES.find(k => k.code === e.code);
-      if (matchedKey) {
-        startPianoNote(matchedKey, true);
+      const matched = PIANO_NOTES.find(k => k.code === e.code);
+      if (matched) {
+        startNote(matched, true, false);
       }
     });
 
     window.addEventListener('keyup', e => {
-      const matchedKey = PIANO_NOTES.find(k => k.code === e.code);
-      if (matchedKey) {
-        stopPianoNote(matchedKey);
+      const matched = PIANO_NOTES.find(k => k.code === e.code);
+      if (matched) {
+        stopNote(matched);
       }
     });
 
-    // ۶. تعامل ماوس با سیم‌ها و درام‌ها
+    // تعامل ماوس با سیم‌ها و درام‌ها
     let lastMouseX = 0;
     canvas.addEventListener('pointerdown', e => {
       ensureAudioReady();
       lastMouseX = e.clientX;
       for (const d of drums) {
         if (Math.hypot(e.clientX - d.x, e.clientY - d.y) <= d.r) {
-          triggerDrum(d);
+          playPercussion(d.id);
+          addSheetNote(d.label, d.step, false, d.color, true, false);
           return;
         }
       }
@@ -888,43 +1436,78 @@
       for (const s of stringLines) {
         if (y >= s.y1 && y <= s.y2) {
           if ((lastMouseX < s.x && x >= s.x) || (lastMouseX > s.x && x <= s.x)) {
-            triggerKineticString(s.keyObj, y);
+            const now = performance.now();
+            if (!stringCooldowns[s.keyObj.code] || now - stringCooldowns[s.keyObj.code] > 140) {
+              stringCooldowns[s.keyObj.code] = now;
+              startNote(s.keyObj, false, false);
+            }
           }
         }
       }
       lastMouseX = x;
     });
 
-    canvas.addEventListener('dblclick', e => {
-      ensureAudioReady();
-      if (e.clientY < staffTop - 180) {
-        spawnOrb(e.clientX, e.clientY);
+    // رویداد دکمه‌های پنل ارگ یاماها
+    document.getElementById('voiceSelect').addEventListener('change', e => {
+      currentVoice = e.target.value;
+      updateLCDInfo();
+    });
+
+    document.getElementById('styleSelect').addEventListener('change', e => {
+      currentStyle = e.target.value;
+      updateLCDInfo();
+    });
+
+    document.getElementById('songSelect').addEventListener('change', e => {
+      if (songPlaying) {
+        startAutoSong(e.target.value);
       }
     });
 
-    // کنترل‌های نوار ابزار بالا
-    document.getElementById('pianoModel').addEventListener('change', e => {
-      currentModel = e.target.value;
+    document.getElementById('playSongBtn').addEventListener('click', () => {
+      ensureAudioReady();
+      if (songPlaying) {
+        stopAutoSong();
+      } else {
+        const songId = document.getElementById('songSelect').value;
+        startAutoSong(songId);
+      }
+    });
+
+    document.getElementById('rhythmToggleBtn').addEventListener('click', () => {
+      ensureAudioReady();
+      if (rhythmRunning) stopRhythmEngine();
+      else startRhythmEngine();
+    });
+
+    document.getElementById('fillInBtn').addEventListener('click', () => {
+      triggerFillIn();
+    });
+
+    document.getElementById('tempoSlider').addEventListener('input', e => {
+      tempoBPM = Number(e.target.value);
+      updateLCDInfo();
     });
 
     document.getElementById('echoSlider').addEventListener('input', e => {
-      updateEchoLevels(Number(e.target.value) / 100);
+      echoAmount = Number(e.target.value) / 100;
+      if (audioCtx && reverbSend && echoSend && echoFeedback) {
+        reverbSend.gain.setTargetAtTime(echoAmount * 0.7, audioCtx.currentTime, 0.05);
+        echoSend.gain.setTargetAtTime(echoAmount * 0.4, audioCtx.currentTime, 0.05);
+        echoFeedback.gain.setTargetAtTime(echoAmount * 0.42, audioCtx.currentTime, 0.05);
+      }
     });
 
     document.getElementById('sustainBtn').addEventListener('click', () => {
       sustainPedal = !sustainPedal;
       const btn = document.getElementById('sustainBtn');
-      btn.textContent = `پدال Sustain (Space): ${sustainPedal ? 'روشن' : 'خاموش'}`;
-      btn.classList.toggle('active', sustainPedal);
+      btn.textContent = `Sustain: ${sustainPedal ? 'روشن' : 'خاموش'}`;
+      btn.classList.toggle('active-blue', sustainPedal);
     });
 
     document.getElementById('addOrbBtn').addEventListener('click', () => {
       ensureAudioReady();
-      spawnOrb(width * (0.35 + Math.random() * 0.3), 115 + Math.random() * 60);
-    });
-
-    document.getElementById('clearOrbsBtn').addEventListener('click', () => {
-      orbs = [];
+      spawnOrb(width * (0.35 + Math.random() * 0.3), 135 + Math.random() * 50);
     });
 
     document.getElementById('clearScoreBtn').addEventListener('click', () => {
@@ -933,21 +1516,20 @@
 
     window.addEventListener('resize', updateLayout);
 
-    // ۷. حلقه اصلی انیمیشن
+    // ۹. حلقه اصلی انیمیشن و رندر زنده
     function animate() {
       ctx.clearRect(0, 0, width, height);
-      const profileColor = PIANO_PROFILES[currentModel].color;
+      const voiceColor = VOICE_COLORS[currentVoice] || '#f59e0b';
       const boxRect = pianoBox.getBoundingClientRect();
       const time = performance.now() * 0.035;
 
-      // ۱. رسم سیم‌های عمودی (مادامی که کلید نگه داشته شده، سیم به ارتعاش ادامه می‌دهد)
+      // ۱. رسم سیم‌های بالای کلاویه‌ها
       for (const s of stringLines) {
         s.y2 = boxRect.top;
-        const isHeld = heldKeysSet.has(s.keyObj.code);
+        const isHeld = heldKeysSet.has(s.keyObj.code) || (currentAutoKey && currentAutoKey.code === s.keyObj.code);
 
         if (isHeld) {
-          // ارتعاش پیوسته و زنده سیم تا وقتی دکمه را نگه داشته‌اید
-          s.amp = Math.sin(time * 1.7) * 9;
+          s.amp = Math.sin(time * 1.8) * 8.5;
         } else {
           const force = -0.32 * s.amp;
           s.vel = (s.vel + force) * 0.88;
@@ -955,31 +1537,29 @@
           if (Math.abs(s.amp) < 0.05) s.amp = 0;
         }
 
-        const isVibrating = Math.abs(s.amp) > 0.4 || isHeld;
-        const sColor = s.keyObj.black ? '#38bdf8' : profileColor;
+        const active = Math.abs(s.amp) > 0.4 || isHeld;
+        const sColor = s.keyObj.black ? '#38bdf8' : voiceColor;
 
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(s.x, s.y1);
         ctx.quadraticCurveTo(s.x + s.amp, (s.y1 + s.y2) * 0.5, s.x, s.y2);
-        ctx.strokeStyle = isVibrating
+        ctx.strokeStyle = active
           ? sColor
-          : (s.keyObj.black ? 'rgba(56, 189, 248, 0.18)' : 'rgba(226, 232, 240, 0.24)');
-        ctx.lineWidth = isVibrating ? 2.8 : 1.2;
-        if (isVibrating) {
+          : (s.keyObj.black ? 'rgba(56, 189, 248, 0.16)' : 'rgba(226, 232, 240, 0.22)');
+        ctx.lineWidth = active ? 2.6 : 1.1;
+        if (active) {
           ctx.shadowColor = sColor;
-          ctx.shadowBlur = 14;
+          ctx.shadowBlur = 12;
         }
         ctx.stroke();
         ctx.restore();
       }
 
-      // ۲. رسم درام‌ها
+      // ۲. رسم پدهای درام
       for (const d of drums) {
-        if (d.cooldown > 0) d.cooldown--;
         d.pulse *= 0.85;
         const r = d.r + d.pulse * 8;
-
         ctx.save();
         ctx.beginPath();
         ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
@@ -990,14 +1570,14 @@
         ctx.stroke();
 
         ctx.fillStyle = '#f1f5f9';
-        ctx.font = 'bold 10px sans-serif';
+        ctx.font = 'bold 9.5px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(d.label, d.x, d.y + 4);
+        ctx.fillText(d.label, d.x, d.y + 3.5);
         ctx.restore();
       }
 
-      // ۳. حرکت گوی‌های متحرک
-      const topWall = 68;
+      // ۳. گوی‌های متحرک
+      const topWall = 100;
       const bottomWall = boxRect.top - 4;
 
       for (const orb of orbs) {
@@ -1005,49 +1585,20 @@
         orb.x += orb.vx;
         orb.y += orb.vy;
 
-        if (orb.x - orb.r < 20 || orb.x + orb.r > width - 20) {
-          orb.vx *= -1;
-          orb.x = Math.max(20 + orb.r, Math.min(width - 20 - orb.r, orb.x));
-        }
-        if (orb.y - orb.r < topWall) {
-          orb.vy = Math.abs(orb.vy);
-          orb.y = topWall + orb.r;
-        } else if (orb.y + orb.r > bottomWall) {
-          orb.vy = -Math.abs(orb.vy);
-          orb.y = bottomWall - orb.r;
-        }
+        if (orb.x - orb.r < 20 || orb.x + orb.r > width - 20) orb.vx *= -1;
+        if (orb.y - orb.r < topWall) orb.vy = Math.abs(orb.vy);
+        else if (orb.y + orb.r > bottomWall) orb.vy = -Math.abs(orb.vy);
 
         for (const s of stringLines) {
           if (orb.y >= s.y1 && orb.y <= s.y2) {
             if ((prevX < s.x && orb.x >= s.x) || (prevX > s.x && orb.x <= s.x)) {
-              triggerKineticString(s.keyObj, orb.y);
+              const now = performance.now();
+              if (!stringCooldowns[s.keyObj.code] || now - stringCooldowns[s.keyObj.code] > 160) {
+                stringCooldowns[s.keyObj.code] = now;
+                startNote(s.keyObj, false, false);
+              }
             }
           }
-        }
-
-        for (const d of drums) {
-          const dx = orb.x - d.x;
-          const dy = orb.y - d.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < orb.r + d.r && dist > 0.001) {
-            triggerDrum(d);
-            const nx = dx / dist;
-            const ny = dy / dist;
-            const dot = orb.vx * nx + orb.vy * ny;
-            orb.vx -= 2 * dot * nx;
-            orb.vy -= 2 * dot * ny;
-          }
-        }
-
-        orb.trail.push({ x: orb.x, y: orb.y });
-        if (orb.trail.length > 10) orb.trail.shift();
-
-        for (let i = 0; i < orb.trail.length; i++) {
-          const ratio = (i + 1) / orb.trail.length;
-          ctx.fillStyle = `rgba(253, 230, 138, ${ratio * 0.25})`;
-          ctx.beginPath();
-          ctx.arc(orb.trail[i].x, orb.trail[i].y, orb.r * ratio * 0.75, 0, Math.PI * 2);
-          ctx.fill();
         }
 
         ctx.beginPath();
@@ -1060,7 +1611,7 @@
       for (let i = ripples.length - 1; i >= 0; i--) {
         const rp = ripples[i];
         rp.r += (rp.maxR - rp.r) * 0.16;
-        rp.alpha *= 0.88;
+        rp.alpha *= 0.87;
         ctx.save();
         ctx.strokeStyle = rp.color;
         ctx.globalAlpha = rp.alpha;
@@ -1072,8 +1623,8 @@
         if (rp.alpha < 0.03) ripples.splice(i, 1);
       }
 
-      // ۵. دفتر نت موسیقی در پایین صفحه (همراه با نمایش کشش نت هنگام نگه داشتن دکمه)
-      ctx.fillStyle = '#090c14';
+      // ۵. دفتر نت زنده در پایین صفحه
+      ctx.fillStyle = '#080b12';
       ctx.fillRect(0, staffTop, width, height - staffTop);
 
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -1082,8 +1633,8 @@
       ctx.lineTo(width, staffTop);
       ctx.stroke();
 
-      const lineSpacing = 13;
-      const bottomLineY = staffTop + 92;
+      const lineSpacing = 12;
+      const bottomLineY = staffTop + 88;
 
       ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
       ctx.lineWidth = 1;
@@ -1096,25 +1647,23 @@
       }
 
       ctx.fillStyle = 'rgba(226, 232, 240, 0.5)';
-      ctx.font = '60px serif';
+      ctx.font = '56px serif';
       ctx.textAlign = 'left';
-      ctx.fillText('𝄞', 42, bottomLineY - 5);
+      ctx.fillText('𝄞', 40, bottomLineY - 5);
 
       const halfStep = lineSpacing / 2;
       for (let i = sheetNotes.length - 1; i >= 0; i--) {
         const n = sheetNotes[i];
-        n.x -= 1.65;
-        if (n.beingHeld) {
-          n.holdLength += 1.65; // افزایش طول خط کشش نت مادامی که دکمه نگه داشته شده
-        }
+        n.x -= 1.7;
+        if (n.beingHeld) n.holdLength += 1.7;
 
         const ny = bottomLineY - n.step * halfStep;
 
         if (n.step <= -2) {
           ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
           ctx.beginPath();
-          ctx.moveTo(n.x - 11, bottomLineY + lineSpacing);
-          ctx.lineTo(n.x + 11, bottomLineY + lineSpacing);
+          ctx.moveTo(n.x - 10, bottomLineY + lineSpacing);
+          ctx.lineTo(n.x + 10, bottomLineY + lineSpacing);
           ctx.stroke();
         }
 
@@ -1122,12 +1671,11 @@
         ctx.fillStyle = n.color;
         ctx.strokeStyle = n.color;
 
-        // رسم دنباله کشش نت (Sustain Bar) برای نت‌های نگه داشته‌شده
         if (n.holdLength > 2) {
           ctx.save();
           ctx.strokeStyle = n.color;
           ctx.globalAlpha = 0.45;
-          ctx.lineWidth = 6;
+          ctx.lineWidth = 5.5;
           ctx.lineCap = 'round';
           ctx.beginPath();
           ctx.moveTo(n.x, ny);
@@ -1136,40 +1684,30 @@
           ctx.restore();
         }
 
-        if (n.isDrum) {
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(n.x - 5, ny - 5);
-          ctx.lineTo(n.x + 5, ny + 5);
-          ctx.moveTo(n.x + 5, ny - 5);
-          ctx.lineTo(n.x - 5, ny + 5);
-          ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(n.x, ny, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        if (n.step < 4) {
+          ctx.moveTo(n.x + 5, ny);
+          ctx.lineTo(n.x + 5, ny - 23);
         } else {
-          ctx.beginPath();
-          ctx.arc(n.x, ny, 5.5, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(n.x - 5, ny);
+          ctx.lineTo(n.x - 5, ny + 23);
+        }
+        ctx.stroke();
 
-          ctx.lineWidth = 1.8;
-          ctx.beginPath();
-          if (n.step < 4) {
-            ctx.moveTo(n.x + 5.5, ny);
-            ctx.lineTo(n.x + 5.5, ny - 25);
-          } else {
-            ctx.moveTo(n.x - 5.5, ny);
-            ctx.lineTo(n.x - 5.5, ny + 25);
-          }
-          ctx.stroke();
-
-          if (n.sharp) {
-            ctx.font = 'bold 12px sans-serif';
-            ctx.fillText('#', n.x - 16, ny + 4);
-          }
+        if (n.sharp) {
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText('#', n.x - 15, ny + 4);
         }
 
-        ctx.font = 'bold 9px sans-serif';
+        ctx.font = 'bold 8.5px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#cbd5e1';
-        ctx.fillText(n.label, n.x, bottomLineY + 34);
+        ctx.fillText(n.label, n.x, bottomLineY + 32);
         ctx.restore();
 
         if (n.x + n.holdLength < 85) sheetNotes.splice(i, 1);
@@ -1178,9 +1716,9 @@
       requestAnimationFrame(animate);
     }
 
-    // اجرای اولیه بدون گوی مزاحم تا تمرکز کامل روی نوازندگی با کیبورد و کشش نت باشد
     window.addEventListener('load', () => {
       updateLayout();
+      updateLCDInfo();
       requestAnimationFrame(animate);
     });
   </script>
