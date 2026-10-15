@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concert Grand Piano - True Sustain & Echo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 15%, #172033 0%, #07090e 82%);
+      font-family: Tahoma, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #f1f5f9;
+    }
+
+    /* نوار کنترل بالا */
+    .hud {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(15, 20, 32, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      z-index: 100;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.65);
+      flex-wrap: wrap;
+      justify-content: center;
+      width: max-content;
+      max-width: 96vw;
+    }
+
+    .select-piano {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fde68a;
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      outline: none;
+      direction: ltr;
+    }
+
+    .select-piano option {
+      background: #11151f;
+      color: #fff;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .btn.active {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: #38bdf8;
+      color: #7dd3fc;
+    }
+
+    .echo-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+
+    .echo-control input[type="range"] {
+      width: 75px;
+      accent-color: #f59e0b;
+      cursor: pointer;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: #94a3b8;
+      padding: 0 4px;
+    }
+
+    /* بوم گرافیکی */
+    #stage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* کیبورد فیزیکی پیانو */
+    .piano-wrapper {
+      position: fixed;
+      bottom: 162px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      padding: 10px 14px 6px;
+      background: linear-gradient(180deg, #1e2430 0%, #0d1017 100%);
+      border-top: 4px solid #991b1b;
+      border-radius: 10px 10px 12px 12px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.78), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      direction: ltr;
+    }
+
+    .piano-keys {
+      position: relative;
+      display: flex;
+      height: 168px;
+      user-select: none;
+    }
+
+    .key-white {
+      position: relative;
+      width: 54px;
+      height: 168px;
+      margin: 0 1.5px;
+      background: linear-gradient(180deg, #e2e8f0 0%, #ffffff 92%, #cbd5e1 100%);
+      border: 1px solid #475569;
+      border-radius: 0 0 8px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 10px;
+      box-shadow: inset 0 -5px 0 rgba(15, 23, 42, 0.15), 0 4px 8px rgba(0, 0, 0, 0.4);
+      transition: transform 0.04s ease, background 0.06s ease, box-shadow 0.06s ease;
+    }
+
+    .key-white.playing {
+      transform: translateY(5px);
+      background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.85);
+    }
+
+    .key-white .k-shortcut {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 3px;
+      pointer-events: none;
+    }
+
+    .key-white .k-note {
+      font-size: 10px;
+      font-weight: 600;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .key-black {
+      position: absolute;
+      top: 0;
+      width: 34px;
+      height: 106px;
+      background: linear-gradient(180deg, #334155 0%, #0f172a 85%, #020617 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      z-index: 10;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding-bottom: 10px;
+      box-shadow: inset 0 -4px 0 rgba(255, 255, 255, 0.08), 0 6px 12px rgba(0, 0, 0, 0.65);
+      transition: transform 0.04s ease, background 0.06s ease, box-shadow 0.06s ease;
+    }
+
+    .key-black.playing {
+      transform: translateY(4px);
+      background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 100%);
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.9);
+    }
+
+    .key-black .k-shortcut {
+      font-size: 11px;
+      font-weight: 700;
+      color: #e2e8f0;
+      pointer-events: none;
+    }
+
+    .key-black .k-note {
+      font-size: 9px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    @media (max-width: 700px) {
+      .key-white { width: 34px; height: 135px; }
+      .key-black { width: 22px; height: 84px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- نوار ابزار بالا -->
+  <div class="hud">
+    <select id="pianoModel" class="select-piano">
+      <option value="steinway">🎹 Steinway D Concert Grand ($2.5M)</option>
+      <option value="fazioli">✨ Fazioli F308 Brunei ($1.2M)</option>
+      <option value="bosendorfer">🏛️ Bösendorfer 290 Imperial ($1.2M)</option>
+    </select>
+
+    <div class="echo-control">
+      <span>اکو و تالار:</span>
+      <input type="range" id="echoSlider" min="0" max="100" value="68" />
+    </div>
+
+    <button class="btn active" id="sustainBtn">پدال Sustain (Space): روشن</button>
+    <button class="btn" id="addOrbBtn">+ گوی متحرک</button>
+    <button class="btn" id="clearOrbsBtn">حذف گوی‌ها</button>
+    <button class="btn" id="clearScoreBtn">پاک کردن نت‌ها</button>
+    <span class="hint">دکمه‌های کیبورد (A تا ; و W E T Y U O P) را نگه دارید تا صدا کشیده شود</span>
+  </div>
+
+  <!-- بوم رسم سیم‌ها، درام، گوی‌های متحرک و خطوط حامل نت -->
+  <canvas id="stage"></canvas>
+
+  <!-- کلاویه‌های پیانو -->
+  <div class="piano-wrapper" id="pianoBox">
+    <div class="piano-keys" id="pianoKeysContainer"></div>
+  </div>
+
+  <script>
+    // ۱. تعریف کلاویه‌ها
+    const PIANO_NOTES = [
+      { note: 'C4',  freq: 261.63, black: false, code: 'KeyA',      label: 'A', step: -2, sharp: false, wIdx: 0 },
+      { note: 'C#4', freq: 277.18, black: true,  code: 'KeyW',      label: 'W', step: -2, sharp: true,  afterW: 0 },
+      { note: 'D4',  freq: 293.66, black: false, code: 'KeyS',      label: 'S', step: -1, sharp: false, wIdx: 1 },
+      { note: 'D#4', freq: 311.13, black: true,  code: 'KeyE',      label: 'E', step: -1, sharp: true,  afterW: 1 },
+      { note: 'E4',  freq: 329.63, black: false, code: 'KeyD',      label: 'D', step: 0,  sharp: false, wIdx: 2 },
+      { note: 'F4',  freq: 349.23, black: false, code: 'KeyF',      label: 'F', step: 1,  sharp: false, wIdx: 3 },
+      { note: 'F#4', freq: 369.99, black: true,  code: 'KeyT',      label: 'T', step: 1,  sharp: true,  afterW: 3 },
+      { note: 'G4',  freq: 392.00, black: false, code: 'KeyG',      label: 'G', step: 2,  sharp: false, wIdx: 4 },
+      { note: 'G#4', freq: 415.30, black: true,  code: 'KeyY',      label: 'Y', step: 2,  sharp: true,  afterW: 4 },
+      { note: 'A4',  freq: 440.00, black: false, code: 'KeyH',      label: 'H', step: 3,  sharp: false, wIdx: 5 },
+      { note: 'A#4', freq: 466.16, black: true,  code: 'KeyU',      label: 'U', step: 3,  sharp: true,  afterW: 5 },
+      { note: 'B4',  freq: 493.88, black: false, code: 'KeyJ',      label: 'J', step: 4,  sharp: false, wIdx: 6 },
+      { note: 'C5',  freq: 523.25, black: false, code: 'KeyK',      label: 'K', step: 5,  sharp: false, wIdx: 7 },
+      { note: 'C#5', freq: 554.37, black: true,  code: 'KeyO',      label: 'O', step: 5,  sharp: true,  afterW: 7 },
+      { note: 'D5',  freq: 587.33, black: false, code: 'KeyL',      label: 'L', step: 6,  sharp: false, wIdx: 8 },
+      { note: 'D#5', freq: 622.25, black: true,  code: 'KeyP',      label: 'P', step: 6,  sharp: true,  afterW: 8 },
+      { note: 'E5',  freq: 659.25, black: false, code: 'Semicolon', label: ';', step: 7,  sharp: false, wIdx: 9 }
+    ];
+
+    // ۲. ساخت کلاویه‌های پیانو در DOM با پشتیبانی از نگه‌داشتن کلید ماوس
+    const keysContainer = document.getElementById('pianoKeysContainer');
+    const keyElements = {};
+    let mouseHeldKey = null;
+
+    function buildPianoDOM() {
+      keysContainer.innerHTML = '';
+      const isMobile = window.innerWidth <= 700;
+      const whiteWidth = isMobile ? 37 : 57;
+      const blackWidth = isMobile ? 22 : 34;
+
+      function attachPointerEvents(el, k) {
+        el.addEventListener('pointerdown', e => {
+          e.stopPropagation();
+          el.releasePointerCapture?.(e.pointerId);
+          mouseHeldKey = k;
+          startPianoNote(k, true);
+        });
+        el.addEventListener('pointerenter', e => {
+          if (e.buttons === 1) {
+            if (mouseHeldKey && mouseHeldKey.code !== k.code) {
+              stopPianoNote(mouseHeldKey);
+            }
+            mouseHeldKey = k;
+            startPianoNote(k, true);
+          }
+        });
+        el.addEventListener('pointerup', () => {
+          if (mouseHeldKey && mouseHeldKey.code === k.code) {
+            stopPianoNote(k);
+            mouseHeldKey = null;
+          }
+        });
+        el.addEventListener('pointerleave', e => {
+          if (e.buttons === 1 && mouseHeldKey && mouseHeldKey.code === k.code) {
+            stopPianoNote(k);
+            mouseHeldKey = null;
+          }
+        });
+      }
+
+      PIANO_NOTES.filter(k => !k.black).forEach(k => {
+        const el = document.createElement('div');
+        el.className = 'key-white';
+        el.innerHTML = `<span class="k-shortcut">${k.label}</span><span class="k-note">${k.note}</span>`;
+        attachPointerEvents(el, k);
+        keysContainer.appendChild(el);
+        keyElements[k.code] = el;
+      });
+
+      PIANO_NOTES.filter(k => k.black).forEach(k => {
+        const el = document.createElement('div');
+        el.className = 'key-black';
+        const leftPx = (k.afterW + 1) * whiteWidth - (blackWidth / 2);
+        el.style.left = leftPx + 'px';
+        el.innerHTML = `<span class="k-shortcut">${k.label}</span><span class="k-note">${k.note}</span>`;
+        attachPointerEvents(el, k);
+        keysContainer.appendChild(el);
+        keyElements[k.code] = el;
+      });
+    }
+
+    window.addEventListener('pointerup', () => {
+      if (mouseHeldKey) {
+        stopPianoNote(mouseHeldKey);
+        mouseHeldKey = null;
+      }
+    });
+
+    // ۳. موتور صوتی پیشرفته پیانو با کشش واقعی (True Sustain) + Reverb تالار + Stereo Echo
+    let audioCtx = null;
+    let dryBus = null;
+    let reverbSendGain = null;
+    let echoSendGain = null;
+    let echoFeedbackGain = null;
+    let masterCompressor = null;
+
+    let sustainPedal = true;
+    let currentModel = 'steinway';
+    let echoAmount = 0.68;
+
+    // نگهداری صداهای فعال برای کنترل نگه‌داشتن و رها کردن هر کلاویه
+    const activeVoices = {};
+    const heldKeysSet = new Set();
+
+    const PIANO_PROFILES = {
+      steinway: {
+        detuneCents: 1.6,
+        inharmonicity: 0.00032,
+        harmonics: [1.0, 0.72, 0.45, 0.28, 0.18, 0.11, 0.07, 0.04],
+        brightness: 9.5,
+        holdDecay: 14.0, // ۱۴ ثانیه کشش طبیعی هنگام نگه داشتن دکمه
+        pedalDecay: 9.0,
+        hammerLevel: 0.25,
+        color: '#f59e0b'
+      },
+      fazioli: {
+        detuneCents: 1.1,
+        inharmonicity: 0.00024,
+        harmonics: [1.0, 0.85, 0.56, 0.36, 0.22, 0.14, 0.09, 0.05],
+        brightness: 13.5,
+        holdDecay: 13.5,
+        pedalDecay: 8.5,
+        hammerLevel: 0.32,
+        color: '#38bdf8'
+      },
+      bosendorfer: {
+        detuneCents: 2.1,
+        inharmonicity: 0.00040,
+        harmonics: [1.0, 0.82, 0.38, 0.20, 0.12, 0.06, 0.03, 0.015],
+        brightness: 6.8,
+        holdDecay: 16.0, // طنین بسیار عمیق و طولانی ارکسترال
+        pedalDecay: 10.5,
+        hammerLevel: 0.19,
+        color: '#a78bfa'
+      }
+    };
+
+    // ساخت پاسخ ضربه سه‌بعدی تالار کنسرت (Concert Hall Impulse Response)
+    function createHallImpulse(actx, duration = 3.8, decay = 2.5) {
+      const rate = actx.sampleRate;
+      const len = Math.floor(rate * duration);
+      const buffer = actx.createBuffer(2, len, rate);
+      for (let ch = 0; ch < 2; ch++) {
+        const data = buffer.getChannelData(ch);
+        for (let i = 0; i < len; i++) {
+          const t = i / len;
+          // بازتاب‌های اولیه تالار + طنین دمِ سالن
+          const early = i < rate * 0.08 ? Math.sin(i * 0.05) * 0.3 : 0;
+          const env = Math.pow(1 - t, decay);
+          data[i] = ((Math.random() * 2 - 1) * env + early * env) * 0.45;
+        }
+      }
+      return buffer;
+    }
+
+    function ensureAudioReady() {
+      try {
+        if (!audioCtx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioCtx();
+
+          masterCompressor = audioCtx.createDynamicsCompressor();
+          masterCompressor.threshold.setValueAtTime(-14, audioCtx.currentTime);
+          masterCompressor.knee.setValueAtTime(18, audioCtx.currentTime);
+          masterCompressor.ratio.setValueAtTime(3.5, audioCtx.currentTime);
+
+          dryBus = audioCtx.createGain();
+          dryBus.gain.value = 0.85;
+
+          // ۱. بخش Reverb تالار کنسرت
+          const convolver = audioCtx.createConvolver();
+          convolver.buffer = createHallImpulse(audioCtx, 3.8, 2.3);
+
+          reverbSendGain = audioCtx.createGain();
+          reverbSendGain.gain.value = echoAmount * 0.65;
+
+          // ۲. بخش Stereo Delay Echo (اکوی گرم و فضاساز)
+          const delayL = audioCtx.createDelay(2.0);
+          const delayR = audioCtx.createDelay(2.0);
+          delayL.delayTime.value = 0.26; // ۲۶۰ میلی‌ثانیه
+          delayR.delayTime.value = 0.38; // ۳۸۰ میلی‌ثانیه
+
+          echoFeedbackGain = audioCtx.createGain();
+          echoFeedbackGain.gain.value = 0.38 * echoAmount;
+
+          const echoFilter = audioCtx.createBiquadFilter();
+          echoFilter.type = 'lowpass';
+          echoFilter.frequency.value = 2400; // اکوی گرم مثل چوب پیانو
+
+          echoSendGain = audioCtx.createGain();
+          echoSendGain.gain.value = echoAmount * 0.38;
+
+          // اتصالات مسیر صدا
+          dryBus.connect(masterCompressor);
+
+          // مسیر Reverb
+          dryBus.connect(reverbSendGain);
+          reverbSendGain.connect(convolver);
+          convolver.connect(masterCompressor);
+
+          // مسیر Echo
+          dryBus.connect(echoSendGain);
+          echoSendGain.connect(echoFilter);
+          echoFilter.connect(delayL);
+          delayL.connect(delayR);
+          delayR.connect(echoFeedbackGain);
+          echoFeedbackGain.connect(echoFilter); // حلقه بازخورد اکو
+
+          delayL.connect(masterCompressor);
+          delayR.connect(masterCompressor);
+
+          masterCompressor.connect(audioCtx.destination);
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+      } catch (e) {}
+    }
+
+    function updateEchoLevels(val) {
+      echoAmount = val;
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      reverbSendGain.gain.setTargetAtTime(echoAmount * 0.72, now, 0.05);
+      echoSendGain.gain.setTargetAtTime(echoAmount * 0.42, now, 0.05);
+      echoFeedbackGain.gain.setTargetAtTime(Math.min(0.52, echoAmount * 0.46), now, 0.05);
+    }
+
+    // شروع نت پیانو (هنگام پایین نگه داشتن کلید)
+    function startPianoNote(k, isHeldByUser = true, hitY = null) {
+      try {
+        ensureAudioReady();
+        if (!audioCtx) return;
+
+        // اگر کاربر کلید را از قبل پایین نگه داشته، دوباره چکش نزند و اجازه دهد صدا کشیده شود
+        if (isHeldByUser && heldKeysSet.has(k.code)) return;
+
+        // اگر صدای قبلی از همین کلید در حال پخش است، به نرمی جایگزین شود
+        if (activeVoices[k.code]) {
+          fadeOutVoice(activeVoices[k.code], 0.06);
+        }
+
+        if (isHeldByUser) {
+          heldKeysSet.add(k.code);
+          const el = keyElements[k.code];
+          if (el) el.classList.add('playing');
+        } else {
+          const el = keyElements[k.code];
+          if (el) {
+            el.classList.add('playing');
+            setTimeout(() => {
+              if (!heldKeysSet.has(k.code)) el.classList.remove('playing');
+            }, 180);
+          }
+        }
+
+        const now = audioCtx.currentTime;
+        const prof = PIANO_PROFILES[currentModel];
+        const freq = k.freq;
+
+        // گین اصلی این نت (پوش دو مرحله‌ای پیانوی واقعی: ضربه اولیه + کشش طولانیِ سیم)
+        const voiceGain = audioCtx.createGain();
+        voiceGain.gain.setValueAtTime(0.0001, now);
+        // ۱. حمله سریع چکش
+        voiceGain.gain.linearRampToValueAtTime(0.34, now + 0.009);
+        // ۲. تثبیت روی طنین گرمِ صفحه صدا (Singing Sustain)
+        voiceGain.gain.exponentialRampToValueAtTime(0.21, now + 0.35);
+        // ۳. کشیده شدن طولانی تا ۱۴-۱۶ ثانیه مادامی که کلید نگه داشته شده است
+        const maxHoldTime = isHeldByUser ? prof.holdDecay : prof.pedalDecay;
+        voiceGain.gain.exponentialRampToValueAtTime(0.0008, now + maxHoldTime);
+
+        // فیلتر پویا برای صفحه صدای چوب صنوبر پیانو (Soundboard Filter)
+        const sbFilter = audioCtx.createBiquadFilter();
+        sbFilter.type = 'lowpass';
+        sbFilter.frequency.setValueAtTime(Math.min(freq * prof.brightness, 15000), now);
+        sbFilter.frequency.exponentialRampToValueAtTime(Math.max(freq * 3.2, 650), now + 1.8);
+        sbFilter.frequency.exponentialRampToValueAtTime(Math.max(freq * 1.6, 380), now + maxHoldTime);
+
+        voiceGain.connect(sbFilter);
+        sbFilter.connect(dryBus);
+
+        const oscillators = [];
+
+        // الف) ۳ سیمِ هم‌صدا (Unison Triple Strings) برای ایجاد موج و کشش زنده پیانو رویال
+        const unisonDetunes = [-prof.detuneCents, 0, +prof.detuneCents];
+        unisonDetunes.forEach((cents, idx) => {
+          const osc = audioCtx.createOscillator();
+          const uGain = audioCtx.createGain();
+          osc.type = idx === 1 ? 'triangle' : 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          osc.detune.setValueAtTime(cents, now);
+
+          uGain.gain.setValueAtTime(idx === 1 ? 0.55 : 0.38, now);
+          osc.connect(uGain);
+          uGain.connect(voiceGain);
+          osc.start(now);
+          osc.stop(now + maxHoldTime + 0.5);
+          oscillators.push(osc);
+        });
+
+        // ب) هارمونیک‌های طبیعی سیم فولادی پیانو (Overtones 2..8)
+        prof.harmonics.forEach((amp, i) => {
+          if (i === 0) return; // فرکانس پایه در ۳ سیم بالا ساخته شد
+          const n = i + 1;
+          const partialFreq = freq * n * Math.sqrt(1 + prof.inharmonicity * n * n);
+          if (partialFreq > 15500) return;
+
+          const osc = audioCtx.createOscillator();
+          const pGain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(partialFreq, now);
+          if (n <= 3) osc.detune.setValueAtTime(prof.detuneCents * 0.7, now);
+
+          // هارمونیک‌های بالاتر به مرور گرم‌تر می‌شوند
+          const pDecay = Math.max(0.6, maxHoldTime / Math.pow(n, 0.72));
+          pGain.gain.setValueAtTime(amp * 0.65, now);
+          pGain.gain.exponentialRampToValueAtTime(0.0005, now + pDecay);
+
+          osc.connect(pGain);
+          pGain.connect(voiceGain);
+          osc.start(now);
+          osc.stop(now + pDecay + 0.2);
+          oscillators.push(osc);
+        });
+
+        // ج) صدای ضربه چکش نمدی (Felt Hammer Thump)
+        const hammerLen = Math.floor(audioCtx.sampleRate * 0.022);
+        const hammerBuf = audioCtx.createBuffer(1, hammerLen, audioCtx.sampleRate);
+        const hData = hammerBuf.getChannelData(0);
+        for (let i = 0; i < hammerLen; i++) {
+          hData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / hammerLen, 2.2);
+        }
+        const hammerSrc = audioCtx.createBufferSource();
+        hammerSrc.buffer = hammerBuf;
+        const hFilter = audioCtx.createBiquadFilter();
+        hFilter.type = 'bandpass';
+        hFilter.frequency.setValueAtTime(Math.min(freq * 3.8, 3800), now);
+        const hGain = audioCtx.createGain();
+        hGain.gain.setValueAtTime(prof.hammerLevel, now);
+        hammerSrc.connect(hFilter);
+        hFilter.connect(hGain);
+        hGain.connect(dryBus);
+        hammerSrc.start(now);
+
+        // ثبت در لیست صداهای فعال و ایجاد نت در دفتر نت پایین
+        const profileColor = prof.color;
+        const noteColor = k.black ? '#38bdf8' : profileColor;
+
+        const scoreNoteObj = addSheetNote(k.note, k.step, k.sharp, noteColor, false, isHeldByUser);
+
+        activeVoices[k.code] = {
+          code: k.code,
+          voiceGain,
+          oscillators,
+          scoreNote: scoreNoteObj,
+          released: !isHeldByUser
+        };
+
+        // ارتعاش اولیه سیم
+        const sLine = stringLines.find(s => s.keyObj.code === k.code);
+        if (sLine) {
+          sLine.amp = 16;
+          ripples.push({
+            x: sLine.x,
+            y: hitY || (sLine.y2 - 18),
+            r: 5,
+            maxR: 34,
+            color: noteColor,
+            alpha: 0.9
+          });
+        }
+      } catch (e) {}
+    }
+
+    function fadeOutVoice(voice, releaseTime = 0.42) {
+      if (!voice || !audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const g = voice.voiceGain.gain;
+        g.cancelScheduledValues(now);
+        g.setValueAtTime(Math.max(g.value, 0.0001), now);
+        g.exponentialRampToValueAtTime(0.0001, now + releaseTime);
+        setTimeout(() => {
+          voice.oscillators.forEach(o => {
+            try { o.stop(); } catch (e) {}
+          });
+        }, releaseTime * 1000 + 80);
+      } catch (e) {}
+    }
+
+    // رها کردن کلید پیانو
+    function stopPianoNote(k) {
+      heldKeysSet.delete(k.code);
+      const el = keyElements[k.code];
+      if (el) el.classList.remove('playing');
+
+      const voice = activeVoices[k.code];
+      if (voice) {
+        voice.released = true;
+        if (voice.scoreNote) {
+          voice.scoreNote.beingHeld = false;
+        }
+        // اگر پدال Sustain خاموش است، نمد خفه‌کن روی سیم قرار می‌گیرد (اما اکو در سالن می‌ماند)
+        // اگر پدال Sustain روشن است، سیم همچنان با طنین طبیعی کشیده می‌شود
+        if (!sustainPedal) {
+          fadeOutVoice(voice, 0.45);
+          delete activeVoices[k.code];
+        } else {
+          fadeOutVoice(voice, 4.5);
+          delete activeVoices[k.code];
+        }
+      }
+    }
+
+    function playDrumSound(type) {
+      try {
+        ensureAudioReady();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        if (type === 'kick') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(130, now);
+          osc.frequency.exponentialRampToValueAtTime(38, now + 0.16);
+          gain.gain.setValueAtTime(0.55, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+          osc.connect(gain);
+          gain.connect(dryBus);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'snare') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(210, now);
+          osc.frequency.exponentialRampToValueAtTime(85, now + 0.12);
+          gain.gain.setValueAtTime(0.35, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain);
+          gain.connect(dryBus);
+          osc.start(now);
+          osc.stop(now + 0.17);
+        } else if (type === 'hihat') {
+          const bufLen = Math.floor(audioCtx.sampleRate * 0.06);
+          const buf = audioCtx.createBuffer(1, bufLen, audioCtx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+          const src = audioCtx.createBufferSource();
+          src.buffer = buf;
+          const hp = audioCtx.createBiquadFilter();
+          hp.type = 'highpass';
+          hp.frequency.setValueAtTime(6500, now);
+          const gain = audioCtx.createGain();
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          src.connect(hp);
+          hp.connect(gain);
+          gain.connect(dryBus);
+          src.start(now);
+        }
+      } catch (e) {}
+    }
+
+    // ۴. مدیریت صحنه، سیم‌ها، گوی‌ها و دفتر نت
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d');
+    const pianoBox = document.getElementById('pianoBox');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let staffTop = height - 148;
+
+    let stringLines = [];
+    let drums = [];
+    let orbs = [];
+    let sheetNotes = [];
+    let ripples = [];
+    const stringCooldowns = {};
+
+    function updateLayout() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      staffTop = height - 148;
+
+      buildPianoDOM();
+
+      const boxRect = pianoBox.getBoundingClientRect();
+      const topLimit = 68;
+      const bottomLimit = boxRect.top;
+
+      stringLines = PIANO_NOTES.map(k => {
+        const el = keyElements[k.code];
+        const r = el ? el.getBoundingClientRect() : { left: width / 2, width: 40 };
+        const cx = r.left + r.width / 2;
+        return {
+          keyObj: k,
+          x: cx,
+          y1: topLimit,
+          y2: bottomLimit,
+          amp: 0,
+          vel: 0
+        };
+      });
+
+      const midY = (topLimit + bottomLimit) * 0.52;
+      drums = [
+        {
+          id: 'kick',
+          label: 'KICK',
+          x: Math.max(65, boxRect.left * 0.5),
+          y: midY + 25,
+          r: 35,
+          color: '#fb7185',
+          step: 0,
+          pulse: 0,
+          cooldown: 0
+        },
+        {
+          id: 'snare',
+          label: 'SNARE',
+          x: Math.max(65, boxRect.left * 0.5),
+          y: midY - 55,
+          r: 29,
+          color: '#fbbf24',
+          step: 4,
+          pulse: 0,
+          cooldown: 0
+        },
+        {
+          id: 'hihat',
+          label: 'HI-HAT',
+          x: Math.min(width - 65, boxRect.right + (width - boxRect.right) * 0.5),
+          y: midY - 15,
+          r: 31,
+          color: '#34d399',
+          step: 8,
+          pulse: 0,
+          cooldown: 0
+        }
+      ];
+    }
+
+    function addSheetNote(label, step, sharp, color, isDrum, beingHeld = false) {
+      const noteItem = {
+        x: width - 90,
+        label,
+        step,
+        sharp,
+        color,
+        isDrum,
+        beingHeld,
+        holdLength: 0
+      };
+      sheetNotes.push(noteItem);
+      return noteItem;
+    }
+
+    function triggerKineticString(k, hitY) {
+      const now = performance.now();
+      if (stringCooldowns[k.code] && now - stringCooldowns[k.code] < 150) return;
+      stringCooldowns[k.code] = now;
+      startPianoNote(k, false, hitY);
+    }
+
+    function triggerDrum(d) {
+      if (d.cooldown > 0) return;
+      d.cooldown = 10;
+      d.pulse = 1;
+      playDrumSound(d.id);
+      addSheetNote(d.label, d.step, false, d.color, true, false);
+      ripples.push({ x: d.x, y: d.y, r: d.r * 0.8, maxR: d.r * 1.7, color: d.color, alpha: 0.85 });
+    }
+
+    function spawnOrb(x, y) {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      orbs.push({
+        x: x ?? (width * 0.5),
+        y: y ?? 125,
+        vx: dir * (3.0 + Math.random() * 1.4),
+        vy: 2.1 + Math.random() * 1.1,
+        r: 8,
+        trail: []
+      });
+    }
+
+    // ۵. رویدادهای کیبورد کامپیوتر (نگه‌داشتن و رها کردن واقعی)
+    window.addEventListener('keydown', e => {
+      ensureAudioReady();
+      if (e.repeat) return; // جلوگیری از قطع و وصل شدن هنگام نگه‌داشتن کلید
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        sustainPedal = !sustainPedal;
+        const btn = document.getElementById('sustainBtn');
+        btn.textContent = `پدال Sustain (Space): ${sustainPedal ? 'روشن' : 'خاموش'}`;
+        btn.classList.toggle('active', sustainPedal);
+        return;
+      }
+
+      const matchedKey = PIANO_NOTES.find(k => k.code === e.code);
+      if (matchedKey) {
+        startPianoNote(matchedKey, true);
+      }
+    });
+
+    window.addEventListener('keyup', e => {
+      const matchedKey = PIANO_NOTES.find(k => k.code === e.code);
+      if (matchedKey) {
+        stopPianoNote(matchedKey);
+      }
+    });
+
+    // ۶. تعامل ماوس با سیم‌ها و درام‌ها
+    let lastMouseX = 0;
+    canvas.addEventListener('pointerdown', e => {
+      ensureAudioReady();
+      lastMouseX = e.clientX;
+      for (const d of drums) {
+        if (Math.hypot(e.clientX - d.x, e.clientY - d.y) <= d.r) {
+          triggerDrum(d);
+          return;
+        }
+      }
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      const x = e.clientX;
+      const y = e.clientY;
+      for (const s of stringLines) {
+        if (y >= s.y1 && y <= s.y2) {
+          if ((lastMouseX < s.x && x >= s.x) || (lastMouseX > s.x && x <= s.x)) {
+            triggerKineticString(s.keyObj, y);
+          }
+        }
+      }
+      lastMouseX = x;
+    });
+
+    canvas.addEventListener('dblclick', e => {
+      ensureAudioReady();
+      if (e.clientY < staffTop - 180) {
+        spawnOrb(e.clientX, e.clientY);
+      }
+    });
+
+    // کنترل‌های نوار ابزار بالا
+    document.getElementById('pianoModel').addEventListener('change', e => {
+      currentModel = e.target.value;
+    });
+
+    document.getElementById('echoSlider').addEventListener('input', e => {
+      updateEchoLevels(Number(e.target.value) / 100);
+    });
+
+    document.getElementById('sustainBtn').addEventListener('click', () => {
+      sustainPedal = !sustainPedal;
+      const btn = document.getElementById('sustainBtn');
+      btn.textContent = `پدال Sustain (Space): ${sustainPedal ? 'روشن' : 'خاموش'}`;
+      btn.classList.toggle('active', sustainPedal);
+    });
+
+    document.getElementById('addOrbBtn').addEventListener('click', () => {
+      ensureAudioReady();
+      spawnOrb(width * (0.35 + Math.random() * 0.3), 115 + Math.random() * 60);
+    });
+
+    document.getElementById('clearOrbsBtn').addEventListener('click', () => {
+      orbs = [];
+    });
+
+    document.getElementById('clearScoreBtn').addEventListener('click', () => {
+      sheetNotes = [];
+    });
+
+    window.addEventListener('resize', updateLayout);
+
+    // ۷. حلقه اصلی انیمیشن
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      const profileColor = PIANO_PROFILES[currentModel].color;
+      const boxRect = pianoBox.getBoundingClientRect();
+      const time = performance.now() * 0.035;
+
+      // ۱. رسم سیم‌های عمودی (مادامی که کلید نگه داشته شده، سیم به ارتعاش ادامه می‌دهد)
+      for (const s of stringLines) {
+        s.y2 = boxRect.top;
+        const isHeld = heldKeysSet.has(s.keyObj.code);
+
+        if (isHeld) {
+          // ارتعاش پیوسته و زنده سیم تا وقتی دکمه را نگه داشته‌اید
+          s.amp = Math.sin(time * 1.7) * 9;
+        } else {
+          const force = -0.32 * s.amp;
+          s.vel = (s.vel + force) * 0.88;
+          s.amp += s.vel;
+          if (Math.abs(s.amp) < 0.05) s.amp = 0;
+        }
+
+        const isVibrating = Math.abs(s.amp) > 0.4 || isHeld;
+        const sColor = s.keyObj.black ? '#38bdf8' : profileColor;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y1);
+        ctx.quadraticCurveTo(s.x + s.amp, (s.y1 + s.y2) * 0.5, s.x, s.y2);
+        ctx.strokeStyle = isVibrating
+          ? sColor
+          : (s.keyObj.black ? 'rgba(56, 189, 248, 0.18)' : 'rgba(226, 232, 240, 0.24)');
+        ctx.lineWidth = isVibrating ? 2.8 : 1.2;
+        if (isVibrating) {
+          ctx.shadowColor = sColor;
+          ctx.shadowBlur = 14;
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // ۲. رسم درام‌ها
+      for (const d of drums) {
+        if (d.cooldown > 0) d.cooldown--;
+        d.pulse *= 0.85;
+        const r = d.r + d.pulse * 8;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        ctx.fill();
+        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = d.color;
+        ctx.stroke();
+
+        ctx.fillStyle = '#f1f5f9';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, d.x, d.y + 4);
+        ctx.restore();
+      }
+
+      // ۳. حرکت گوی‌های متحرک
+      const topWall = 68;
+      const bottomWall = boxRect.top - 4;
+
+      for (const orb of orbs) {
+        const prevX = orb.x;
+        orb.x += orb.vx;
+        orb.y += orb.vy;
+
+        if (orb.x - orb.r < 20 || orb.x + orb.r > width - 20) {
+          orb.vx *= -1;
+          orb.x = Math.max(20 + orb.r, Math.min(width - 20 - orb.r, orb.x));
+        }
+        if (orb.y - orb.r < topWall) {
+          orb.vy = Math.abs(orb.vy);
+          orb.y = topWall + orb.r;
+        } else if (orb.y + orb.r > bottomWall) {
+          orb.vy = -Math.abs(orb.vy);
+          orb.y = bottomWall - orb.r;
+        }
+
+        for (const s of stringLines) {
+          if (orb.y >= s.y1 && orb.y <= s.y2) {
+            if ((prevX < s.x && orb.x >= s.x) || (prevX > s.x && orb.x <= s.x)) {
+              triggerKineticString(s.keyObj, orb.y);
+            }
+          }
+        }
+
+        for (const d of drums) {
+          const dx = orb.x - d.x;
+          const dy = orb.y - d.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < orb.r + d.r && dist > 0.001) {
+            triggerDrum(d);
+            const nx = dx / dist;
+            const ny = dy / dist;
+            const dot = orb.vx * nx + orb.vy * ny;
+            orb.vx -= 2 * dot * nx;
+            orb.vy -= 2 * dot * ny;
+          }
+        }
+
+        orb.trail.push({ x: orb.x, y: orb.y });
+        if (orb.trail.length > 10) orb.trail.shift();
+
+        for (let i = 0; i < orb.trail.length; i++) {
+          const ratio = (i + 1) / orb.trail.length;
+          ctx.fillStyle = `rgba(253, 230, 138, ${ratio * 0.25})`;
+          ctx.beginPath();
+          ctx.arc(orb.trail[i].x, orb.trail[i].y, orb.r * ratio * 0.75, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.beginPath();
+        ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#fef08a';
+        ctx.fill();
+      }
+
+      // ۴. امواج دایره‌ای
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i];
+        rp.r += (rp.maxR - rp.r) * 0.16;
+        rp.alpha *= 0.88;
+        ctx.save();
+        ctx.strokeStyle = rp.color;
+        ctx.globalAlpha = rp.alpha;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+        if (rp.alpha < 0.03) ripples.splice(i, 1);
+      }
+
+      // ۵. دفتر نت موسیقی در پایین صفحه (همراه با نمایش کشش نت هنگام نگه داشتن دکمه)
+      ctx.fillStyle = '#090c14';
+      ctx.fillRect(0, staffTop, width, height - staffTop);
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.beginPath();
+      ctx.moveTo(0, staffTop);
+      ctx.lineTo(width, staffTop);
+      ctx.stroke();
+
+      const lineSpacing = 13;
+      const bottomLineY = staffTop + 92;
+
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+      ctx.lineWidth = 1;
+      for (let l = 0; l < 5; l++) {
+        const ly = bottomLineY - l * lineSpacing;
+        ctx.beginPath();
+        ctx.moveTo(35, ly);
+        ctx.lineTo(width - 35, ly);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = 'rgba(226, 232, 240, 0.5)';
+      ctx.font = '60px serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('𝄞', 42, bottomLineY - 5);
+
+      const halfStep = lineSpacing / 2;
+      for (let i = sheetNotes.length - 1; i >= 0; i--) {
+        const n = sheetNotes[i];
+        n.x -= 1.65;
+        if (n.beingHeld) {
+          n.holdLength += 1.65; // افزایش طول خط کشش نت مادامی که دکمه نگه داشته شده
+        }
+
+        const ny = bottomLineY - n.step * halfStep;
+
+        if (n.step <= -2) {
+          ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+          ctx.beginPath();
+          ctx.moveTo(n.x - 11, bottomLineY + lineSpacing);
+          ctx.lineTo(n.x + 11, bottomLineY + lineSpacing);
+          ctx.stroke();
+        }
+
+        ctx.save();
+        ctx.fillStyle = n.color;
+        ctx.strokeStyle = n.color;
+
+        // رسم دنباله کشش نت (Sustain Bar) برای نت‌های نگه داشته‌شده
+        if (n.holdLength > 2) {
+          ctx.save();
+          ctx.strokeStyle = n.color;
+          ctx.globalAlpha = 0.45;
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(n.x, ny);
+          ctx.lineTo(n.x + n.holdLength, ny);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        if (n.isDrum) {
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(n.x - 5, ny - 5);
+          ctx.lineTo(n.x + 5, ny + 5);
+          ctx.moveTo(n.x + 5, ny - 5);
+          ctx.lineTo(n.x - 5, ny + 5);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          ctx.arc(n.x, ny, 5.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          if (n.step < 4) {
+            ctx.moveTo(n.x + 5.5, ny);
+            ctx.lineTo(n.x + 5.5, ny - 25);
+          } else {
+            ctx.moveTo(n.x - 5.5, ny);
+            ctx.lineTo(n.x - 5.5, ny + 25);
+          }
+          ctx.stroke();
+
+          if (n.sharp) {
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('#', n.x - 16, ny + 4);
+          }
+        }
+
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(n.label, n.x, bottomLineY + 34);
+        ctx.restore();
+
+        if (n.x + n.holdLength < 85) sheetNotes.splice(i, 1);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // اجرای اولیه بدون گوی مزاحم تا تمرکز کامل روی نوازندگی با کیبورد و کشش نت باشد
+    window.addEventListener('load', () => {
+      updateLayout();
+      requestAnimationFrame(animate);
+    });
+  </script>
+</body>
+</html>
